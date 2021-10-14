@@ -1,0 +1,8 @@
+rsa.c:21:6:generate_rand	24	static
+rsa.c:34:5:rsa_public_encrypt	48	static
+rsa.c:66:5:rsa_public_decrypt	312	static
+rsa.c:105:5:rsa_private_encrypt	312	static
+rsa.c:133:5:rsa_private_decrypt	312	static
+rsa.c:170:12:public_block_operation	40	static
+rsa.c:197:12:private_block_operation	3176	static
+rsa.c:257:5:RSA2048_Pubkey_Encrypt	40	static

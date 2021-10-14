@@ -1,0 +1,9 @@
+ethLAN.c:19:6:udp_receive_callback	24	static
+ethLAN.c:32:6:udp_client_connect	24	static
+ethLAN.c:70:6:udp_client_send	24	static
+ethLAN.c:109:6:ethSendTask	56	static
+ethLAN.c:152:6:ethConnectRelease	8	static
+ethLAN.c:164:5:ethConnectTcpUdp	40	static
+ethLAN.c:223:6:ethRecv	24	static
+ethLAN.c:248:6:ethConnectTask	16	static
+ethLAN.c:287:6:ethSendIP	48	static

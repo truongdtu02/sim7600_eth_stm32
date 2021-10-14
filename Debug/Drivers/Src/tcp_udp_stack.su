@@ -1,0 +1,16 @@
+tcp_udp_stack.c:52:6:TCP_UDP_Notify	16	static
+tcp_udp_stack.c:59:6:TCP_UDP_Send	24	static
+tcp_udp_stack.c:73:6:AudioPacketHandle	24	static
+tcp_udp_stack.c:96:6:TCP_Packet_Handle	56	static
+tcp_udp_stack.c:276:5:HexStringToByteArray	24	static
+tcp_udp_stack.c:313:6:TCP_Packet_Analyze	40	static
+tcp_udp_stack.c:373:6:UDP_Packet_Analyze	40	static
+tcp_udp_stack.c:400:9:TCP_UDP_GetNtpTime	20	static
+tcp_udp_stack.c:470:6:TCP_UDP_Stack_Init	24	static
+tcp_udp_stack.c:515:6:TCP_UDP_Stack_Release	8	static
+tcp_udp_stack.c:524:6:TCP_Timer_Callback	24	static
+tcp_udp_stack.c:585:6:TCP_Request	8	static
+tcp_udp_stack.c:590:6:Is_TCP_LTSHanshake_Connected	4	static
+tcp_udp_stack.c:593:6:CheckMD5	32	static
+tcp_udp_stack.c:612:6:ConvertTextWithSalt	32	static
+tcp_udp_stack.c:644:6:CheckSaltACK	24	static

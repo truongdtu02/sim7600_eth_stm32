@@ -1,0 +1,20 @@
+{
+    "stm32-for-vscode.openOCDPath": false,
+    "stm32-for-vscode.makePath": "C:\\MINGW\\BIN\\MAKE.EXE",
+    "stm32-for-vscode.armToolchainPath": false,
+    "files.associations": {
+        "bit": "cpp",
+        "compare": "cpp",
+        "cstddef": "cpp",
+        "limits": "cpp",
+        "type_traits": "cpp",
+        "xutility": "cpp",
+        "cmsis_os.h": "c",
+        "cstdint": "cpp",
+        "sim7600_uart_dma.h": "c",
+        "stdint.h": "c",
+        "stm32f4xx_hal_flash_ex.h": "c",
+        "ethlan.h": "c",
+        "tcp_udp_stack.h": "c"
+    }
+}

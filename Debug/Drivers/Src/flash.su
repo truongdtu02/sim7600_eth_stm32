@@ -1,0 +1,7 @@
+flash.c:5:10:Flash_Write_Data	48	static
+flash.c:62:6:Flash_Read_Data	24	static
+flash.c:75:6:Flash_Write_Word	24	static
+flash.c:97:10:Flash_Read_Word	24	static
+flash.c:106:6:Flash_Reset_Sector	40	static
+flash.c:139:6:log_erase	8	static
+flash.c:147:6:log_write	24	static
