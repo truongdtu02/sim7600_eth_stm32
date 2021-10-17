@@ -14,7 +14,8 @@ C_SRCS += \
 ../Drivers/Src/mp3Frame.c \
 ../Drivers/Src/rsa.c \
 ../Drivers/Src/sim7600_uart_dma.c \
-../Drivers/Src/tcp_udp_stack.c 
+../Drivers/Src/tcp_udp_stack.c \
+../Drivers/Src/vs1063a.c 
 
 OBJS += \
 ./Drivers/Src/AES_128.o \
@@ -26,7 +27,8 @@ OBJS += \
 ./Drivers/Src/mp3Frame.o \
 ./Drivers/Src/rsa.o \
 ./Drivers/Src/sim7600_uart_dma.o \
-./Drivers/Src/tcp_udp_stack.o 
+./Drivers/Src/tcp_udp_stack.o \
+./Drivers/Src/vs1063a.o 
 
 C_DEPS += \
 ./Drivers/Src/AES_128.d \
@@ -38,7 +40,8 @@ C_DEPS += \
 ./Drivers/Src/mp3Frame.d \
 ./Drivers/Src/rsa.d \
 ./Drivers/Src/sim7600_uart_dma.d \
-./Drivers/Src/tcp_udp_stack.d 
+./Drivers/Src/tcp_udp_stack.d \
+./Drivers/Src/vs1063a.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

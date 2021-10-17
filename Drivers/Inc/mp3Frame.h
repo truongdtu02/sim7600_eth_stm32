@@ -18,6 +18,8 @@
 
 #define MP3_NUM_OF_FRAME_MAX 80 //eache frame 48kbps ~ 200KB, 80 frames ~ 16KB
 
+#define min(a,b) (((a)<(b))?(a):(b))
+
 typedef struct
 {
 	uint8_t type;
@@ -60,5 +62,9 @@ struct Frame_Struct
 typedef struct Frame_Struct FrameStruct;
 
 void mp3GetFrame(MP3Struct *mp3Packet, int len);
+int mp3GetVol();
+FrameStruct *mp3GetNewFrame();
+bool mp3CheckFrame(FrameStruct *frame);
+void mp3RemoveTcpFrame(FrameStruct *frame);
 
 #endif

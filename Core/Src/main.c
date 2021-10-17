@@ -30,6 +30,7 @@
 #include "AES_128.h"
 #include "md5.h"
 #include "ethLAN.h"
+#include "vs1063a.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,7 +48,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-SPI_HandleTypeDef hspi3;
+SPI_HandleTypeDef hspi2;
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim8;
@@ -124,14 +125,14 @@ osThreadId_t connectEthTaskId;
 const osThreadAttr_t connectEthTask_attributes = {
   .name = "connectEthTask",
   .stack_size = 1024 * 4,
-  .priority = (osPriority_t) osPriorityHigh2,
+  .priority = (osPriority_t) osPriorityHigh,
 };
 
 osThreadId_t sendEthTaskId;
 const osThreadAttr_t sendEthTask_attributes = {
   .name = "sendEthTask",
   .stack_size = 256 * 4,
-  .priority = (osPriority_t) osPriorityHigh1,
+  .priority = (osPriority_t) osPriorityHigh,
 };
 
 osThreadId_t recvEthTaskId;
@@ -139,6 +140,13 @@ const osThreadAttr_t recvEthTask_attributes = {
   .name = "recvEthTask",
   .stack_size = 1024 * 4 ,
   .priority = (osPriority_t) osPriorityHigh,
+};
+
+osThreadId_t vs1063TaskId;
+const osThreadAttr_t vs1063Task_attributes = {
+  .name = "vs1063Task",
+  .stack_size = 256 * 4 ,
+  .priority = (osPriority_t) osPriorityHigh, //==recvETH recvSim task
 };
 ////////////////////////////////////////
 
@@ -225,11 +233,11 @@ void SimStt_Timer_Callback(void *argument)
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_SPI3_Init(void);
 static void MX_DMA_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM8_Init(void);
+static void MX_SPI2_Init(void);
 void StartDefaultTask(void *argument);
 void CallbackTimerPeriodic(void *argument);
 void CallbackTimerOnce(void *argument);
@@ -237,7 +245,7 @@ void CallbackTimerOnce(void *argument);
 /* USER CODE BEGIN PFP */
 char* DeviceID = "123456781234567812345678";
 
-#if DEBUG_LOG
+// #if DEBUG_LOG
 int _write(int32_t file, uint8_t *ptr, int32_t len)
 {
     for (int i = 0; i < len; i++)
@@ -246,7 +254,7 @@ int _write(int32_t file, uint8_t *ptr, int32_t len)
     }
     return len;
 }
-#endif
+// #endif
 
 volatile unsigned long ulHighFrequencyTimerTicks;
 
@@ -274,6 +282,8 @@ void StartRecvSimTask(void *argument);
 void StartConnectEthTask(void *argument);
 void StartSendEthTask(void *argument);
 void StartRecvEthTask(void *argument);
+
+void StartVs1063Task(void *argument);
 /* USER CODE END 0 */
 
 /**
@@ -304,11 +314,11 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_SPI3_Init();
   MX_DMA_Init();
   MX_USART1_UART_Init();
   MX_TIM2_Init();
   MX_TIM8_Init();
+  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim2);
   configureTimerForRunTimeStats();
@@ -382,9 +392,12 @@ int main(void)
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
+//  VS1063_Init();
+  VS1063_SoftReset();
   while (1)
   {
+	  VS1063_PlayBeep();
+	  HAL_Delay(500);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -438,40 +451,40 @@ void SystemClock_Config(void)
 }
 
 /**
-  * @brief SPI3 Initialization Function
+  * @brief SPI2 Initialization Function
   * @param None
   * @retval None
   */
-static void MX_SPI3_Init(void)
+static void MX_SPI2_Init(void)
 {
 
-  /* USER CODE BEGIN SPI3_Init 0 */
+  /* USER CODE BEGIN SPI2_Init 0 */
 
-  /* USER CODE END SPI3_Init 0 */
+  /* USER CODE END SPI2_Init 0 */
 
-  /* USER CODE BEGIN SPI3_Init 1 */
+  /* USER CODE BEGIN SPI2_Init 1 */
 
-  /* USER CODE END SPI3_Init 1 */
-  /* SPI3 parameter configuration*/
-  hspi3.Instance = SPI3;
-  hspi3.Init.Mode = SPI_MODE_MASTER;
-  hspi3.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi3.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
-  hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
-  hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
-  hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
-  hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-  hspi3.Init.CRCPolynomial = 10;
-  if (HAL_SPI_Init(&hspi3) != HAL_OK)
+  /* USER CODE END SPI2_Init 1 */
+  /* SPI2 parameter configuration*/
+  hspi2.Instance = SPI2;
+  hspi2.Init.Mode = SPI_MODE_MASTER;
+  hspi2.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi2.Init.CLKPolarity = SPI_POLARITY_HIGH;
+  hspi2.Init.CLKPhase = SPI_PHASE_2EDGE;
+  hspi2.Init.NSS = SPI_NSS_SOFT;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
+  hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi2.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi2) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN SPI3_Init 2 */
+  /* USER CODE BEGIN SPI2_Init 2 */
 
-  /* USER CODE END SPI3_Init 2 */
+  /* USER CODE END SPI2_Init 2 */
 
 }
 
@@ -696,7 +709,7 @@ static void MX_GPIO_Init(void)
   /**/
   GPIO_InitStruct.Pin = LL_GPIO_PIN_7|LL_GPIO_PIN_11|LL_GPIO_PIN_13;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
-  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(GPIOE, &GPIO_InitStruct);
@@ -761,6 +774,12 @@ void StartRecvEthTask(void *argument)
   (void*) argument;
   ethRecvTask();
 }
+
+void StartVs1063Task(void *argument)
+{
+	(void*) argument;
+	VS1063_PlayMP3_Task();
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -775,6 +794,12 @@ void StartDefaultTask(void *argument)
   /* init code for LWIP */
   MX_LWIP_Init();
   /* USER CODE BEGIN 5 */
+//	VS1063_Init();
+//	while(true)
+//	{
+//		VS1063_PlayBeep();
+//		osDelay(500);
+//	}
   if (netif_is_link_up(&gnetif) == 0)
   {
     //start with sim7600
@@ -790,6 +815,7 @@ void StartDefaultTask(void *argument)
     connectSimTaskHandle = osThreadNew(StartConnectSimTask, NULL, &connectSimTask_attributes);
     sendSimTaskHandle = osThreadNew(StartSendSimTask, NULL, &sendSimTask_attributes);
     recvSimTaskHandle = osThreadNew(StartRecvSimTask, NULL, &recvSimTask_attributes);
+    vs1063TaskId = osThreadNew(StartVs1063Task, NULL, &vs1063Task_attributes);
   }
   else
   {
@@ -808,6 +834,7 @@ void StartDefaultTask(void *argument)
     connectEthTaskId = osThreadNew(StartConnectEthTask, NULL, &connectEthTask_attributes);
     sendEthTaskId = osThreadNew(StartSendEthTask, NULL, &sendEthTask_attributes);
     // recvEthTaskId = osThreadNew(StartRecvEthTask, NULL, &recvEthTask_attributes);
+    vs1063TaskId = osThreadNew(StartVs1063Task, NULL, &vs1063Task_attributes);
   }
 
   /* Infinite loop */

@@ -46,10 +46,10 @@
 #define RSA_PACKET_LEN (RSA_BLOCK_LEN + SIZE_OF_LEN) //size of rsa pubkey
 
 #define TLS_HANDSHAKE_TIMEOUT 20000 //20s
-#define TIMER_INTERVAL 10000 //10s
-#define SEND_STAUS_INTERVAL 60 // 60 * TIMER_INTERVAL 600s
-#define KEEP_ALIVE_INTERVAL 3 // 6 * TIMER_INTERVAL 60s
-#define NTP_INTERVAL 69 // 390 * TIMER_INTERVAL 3900s
+#define TIMER_INTERVAL 2000 //10s
+#define SEND_STAUS_INTERVAL 300 // 60 * TIMER_INTERVAL 600s
+#define KEEP_ALIVE_INTERVAL 20 // 6 * TIMER_INTERVAL 40s
+#define NTP_INTERVAL 300 // 390 * TIMER_INTERVAL 3900s
 #define RTT_NTP_MAX 100
 
 #define PACKET_TCP_HEADER_LENGTH (4 + 16 + 1) // 4 byte len, 16 byte md5, 1B type
@@ -58,6 +58,9 @@
 
 #define MP3_PACKET_HEADER_LEN (1 + 4 + 16 + 1 + 8 + 4 + 1 + 2 + 2 + 1) //not inlcude 4B len, 16B md5
 #define MP3_PACKET_HEADER_LEN_BEFORE_VOLUME (1 + 4 + 16)
+
+#define UDP_BUFF_LEN 14
+#define UDP_PACKET_LEN 28
 
 typedef struct
 {
@@ -79,6 +82,7 @@ typedef struct
 {
     int64_t serverTime;
     uint32_t clientTime;
+    uint16_t checksum;
 } __attribute__ ((packed)) NTPStruct2;
 
 enum SendRecvPackeTypeEnum { StatusRecvEnum, PacketMP3Enum };
@@ -98,7 +102,6 @@ int64_t TCP_UDP_GetNtpTime();
 
 bool CheckMD5(PacketTCPStruct *packet);
 bool CheckSaltACK(uint8_t *data, int len);
-
 
 enum SaltEnum { Add, Sub};
 void ConvertTextWithSalt(uint8_t *data, int offset, int len, enum SaltEnum saltType);

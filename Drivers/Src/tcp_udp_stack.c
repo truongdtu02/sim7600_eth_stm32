@@ -82,9 +82,7 @@ bool AudioPacketHandle(uint8_t *data, int len)
     lenPacketDecrypt -=  (lenPacketDecrypt % 16); //make sure it is multiple of 16 aes block len
     if(AES_Decrypt_Packet_Key(&(mp3Packet->volume), lenPacketDecrypt, mp3Packet->aesMP3key) > 0)
     {
-      uint8_t vol = mp3Packet->volume;
-      if(vol == 100)
-        return true;
+      mp3GetFrame(data, len);
     }
   }
   //wrong mp3 packet
@@ -273,6 +271,7 @@ int old_packet_len;
 //convert hex string to byte array, auto override. return len of byte array if success, else return -1
 uint8_t hexStringMap[255];
 bool bHexStringMapFrist = true;
+
 int HexStringToByteArray()
 {
   //initialize
@@ -305,6 +304,44 @@ int HexStringToByteArray()
   {
     uint8_t tmpByte = (hexStringMap[TcpBuff[i]] << 4) | hexStringMap[TcpBuff[i+1]];
     TcpBuff[j] = tmpByte;
+  }
+  return j;
+}
+
+//retrun >0 ~ successful, -1~fail
+uint8_t UdpBuff[UDP_BUFF_LEN];
+int HexStringToByteArrayUDP(uint8_t *data, int len)
+{
+  if(len != UDP_PACKET_LEN) return -1;
+  //initialize map table
+  if(bHexStringMapFrist)
+  {
+    bHexStringMapFrist = false;
+    for(int i = 0; i < 255; i++)
+    {
+      if(i >= '0' && i <= '9')
+      {
+        hexStringMap[i] = i - '0';
+      }
+      else if(i >= 'A' && i <= 'F')
+      {
+        hexStringMap[i] = i - 'A' + 10;
+      }
+      else if(i >= 'a' && i <= 'f')
+      {
+        hexStringMap[i] = i - 'a' + 10;
+      }
+      else
+      {
+        hexStringMap[i] = 0;
+      }
+    }
+  }
+
+  int i, j; //i for hex string, j for byte array
+  for(i = 0, j = 0; i < len; i+=2, j++)
+  {
+    UdpBuff[j] = (hexStringMap[data[i]] << 4) | hexStringMap[data[i+1]];
   }
   return j;
 }
@@ -368,22 +405,51 @@ void TCP_Packet_Analyze(uint8_t *recvData, int length)
   }
 }
 
+uint16_t checkSum(uint8_t *ptr, int length)
+{
+	uint32_t checksum = 0;
+	while (length > 1) //cong het cac byte16 lai
+	{
+		checksum += ((uint32_t)*ptr << 8) | (uint32_t) *(ptr + 1);
+		ptr += 2;
+		length -= 2;
+	}
+	if (length)
+	{
+		checksum += ((uint32_t)*ptr) << 8; //neu con le 1 byte
+	}
+	while (checksum >> 16)
+	{
+		checksum = (checksum & 0xFFFF) + (checksum >> 16);
+	}
+	//nghich dao bit
+	checksum = ~checksum;
+
+	return (uint16_t)checksum;
+}
+
 uint32_t rtt;
 int64_t ntpTime = 0, ntpStart; //ntpstart = timer of stm32 when receive ntpTime
 void UDP_Packet_Analyze(uint8_t *data, int len)
 {
   LOG_WRITE("udpPacketAnalyze\n");
   //ntp packet
-  if (len == 12)
+  if (len == UDP_PACKET_LEN)
   {
-    NTPStruct2 *ntpPack = (NTPStruct2 *)data;
-    rtt = (TIM_NTP->CNT - ntpPack->clientTime) >> 1; // >> 1 ~ / 2 (since TIM_NTP tick 0.5ms)
+    if(HexStringToByteArrayUDP(data, len) != UDP_BUFF_LEN) return;
+
+    NTPStruct2 *ntpPack = (NTPStruct2 *)UdpBuff;
+
+    if(checkSum((uint8_t*)UdpBuff, UDP_BUFF_LEN - 2) != ntpPack->checksum) return; //-2B checksum
+
+    uint32_t recvNTPTime = TIM_NTP->CNT;
+    rtt = (recvNTPTime - ntpPack->clientTime) >> 1; // >> 1 ~ / 2 (since TIM_NTP tick 0.5ms)
 
     //the first time, get as soon as posible
     if (ntpTime == 0)
     {
       ntpTime = ntpPack->serverTime + rtt / 2;
-      ntpStart = TIM_NTP->CNT >> 1; // /2 since TIMER tick 0.5ms
+      ntpStart = recvNTPTime >> 1; // /2 since TIMER tick 0.5ms
     }
 
     //get until enough percious
@@ -391,7 +457,7 @@ void UDP_Packet_Analyze(uint8_t *data, int len)
     {
       udpTimerCount++;
       ntpTime = ntpPack->serverTime + rtt / 2;
-      ntpStart = TIM_NTP->CNT >> 1; // >> 1 ~ /2 since TIMER tick 0.5ms
+      ntpStart = recvNTPTime >> 1; // >> 1 ~ /2 since TIMER tick 0.5ms
     }
   }
 }
@@ -399,7 +465,9 @@ void UDP_Packet_Analyze(uint8_t *data, int len)
 //get UTC NTP time
 int64_t TCP_UDP_GetNtpTime()
 {
-  return ntpTime + (TIM_NTP->CNT >> 1) - ntpStart; //  >> 1 ~ /2 since TIMER tick 0.5ms
+  if(ntpTime == 0) return 0; //don't have ntp time
+  int64_t curTime = TIM_NTP->CNT;
+  return ntpTime + (curTime >> 1) - ntpStart; //  >> 1 ~ /2 since TIMER tick 0.5ms
 }
 
 // void UDP_Packet_Analyze(uint8_t *data, int len)
@@ -572,12 +640,15 @@ void TCP_Timer_Callback(void *argument)
     // TCP_UDP_Send(2, NTP_Packet, NTP_PACKET_LEN);
     uint32_t curT = TIM_NTP->CNT;
     memcpy(NTP_Packet, (uint8_t *)(&curT), 4);
-    TCP_UDP_Send(2, NTP_Packet, 4);
+    uint16_t _checksum = checkSum(NTP_Packet, 4);
+    memcpy(NTP_Packet + 4, (uint8_t*)(&_checksum), 2);
+    TCP_UDP_Send(2, NTP_Packet, 6);
   }
   else
   {
     udpTimerCount++;
   }
+  
   osTimerStart(TCPTimerOnceID, TIMER_INTERVAL);
 }
 

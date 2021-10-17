@@ -40,6 +40,7 @@
 "./Drivers/Src/rsa.o"
 "./Drivers/Src/sim7600_uart_dma.o"
 "./Drivers/Src/tcp_udp_stack.o"
+"./Drivers/Src/vs1063a.o"
 "./LWIP/App/lwip.o"
 "./LWIP/Target/ethernetif.o"
 "./Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.o"

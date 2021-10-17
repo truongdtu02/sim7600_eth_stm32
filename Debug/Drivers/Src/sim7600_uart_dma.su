@@ -50,7 +50,7 @@ sim7600_uart_dma.c:838:6:sim7600_sendTask	48	static
 sim7600_uart_dma.c:868:6:sim7600_recvTask	8	static
 sim7600_uart_dma.c:884:6:sim7600_usart_rx_check	24	static
 sim7600_uart_dma.c:955:5:check_normal_response	24	static
-sim7600_uart_dma.c:994:5:check_normal_ip_packet	48	static
+sim7600_uart_dma.c:994:5:check_normal_ip_packet	40	static
 sim7600_uart_dma.c:1063:5:sim7600_handle_received_data	64	static
 sim7600_uart_dma.c:1325:6:sim7600_change_baud	16	static
 sim7600_uart_dma.c:1337:6:sim7600_reset_all_state	8	static

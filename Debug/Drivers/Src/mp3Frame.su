@@ -1,1 +1,6 @@
-mp3Frame.c:7:6:mp3GetFrame	112	static
+mp3Frame.c:14:6:mp3GetFrame	112	static
+mp3Frame.c:151:5:mp3GetVol	8	static
+mp3Frame.c:157:14:mp3GetNewFrame	8	static
+mp3Frame.c:163:6:mp3RemoveFrame	16	static
+mp3Frame.c:179:6:mp3RemoveTcpFrame	24	static
+mp3Frame.c:196:6:mp3CheckFrame	40	static
