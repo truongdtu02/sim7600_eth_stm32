@@ -39,7 +39,7 @@
 #define CONFIG_SPI_CLOCKF 0xB000 // sci mul=4, sci add = 1,5
 
 #define SPI_AUDIO_PRESCLE_RESET SPI_BAUDRATEPRESCALER_128
-#define SPI_AUDIO_PRESCLE_MAIN SPI_BAUDRATEPRESCALER_8
+#define SPI_AUDIO_PRESCLE_MAIN SPI_BAUDRATEPRESCALER_16
 
 
 /* Private define ------------------------------------------------------------*/
@@ -69,11 +69,19 @@
 
 #define MP3_DREQ HAL_GPIO_ReadPin(DREQ_GPIO_Port, DREQ_Pin)
 
-#define SDI_ENABLE      MP3_DCS(0);
-#define SDI_DISABLE     MP3_DCS(1);
+#define FM_SIGNAL HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12)
+#define MIC_SIGNAL HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_8)
+
+//EN OR DIS TPA3116D2
+#define AMPLI_ON        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_5, GPIO_PIN_SET)
+#define AMPLI_OFF       HAL_GPIO_WritePin(GPIOE, GPIO_PIN_5, GPIO_PIN_RESET)
+#define AMPLI_IS_ON     LL_GPIO_IsOutputPinSet(GPIOE, LL_GPIO_PIN_5)
+
+#define SDI_ENABLE      MP3_DCS(0); MP3_CCS(1);
+#define SDI_DISABLE     MP3_DCS(1); MP3_CCS(0);
 	
-#define SCI_ENABLE      MP3_CCS(0);
-#define SCI_DISABLE     MP3_CCS(1);
+#define SCI_ENABLE      MP3_CCS(0); MP3_DCS(1);
+#define SCI_DISABLE     MP3_CCS(1); MP3_DCS(0);
 
 
 #define VS_WRITE_COMMAND 	0x02
@@ -96,6 +104,9 @@
 #define SPI_AICTRL1     	0x0d   
 #define SPI_AICTRL2     	0x0e   
 #define SPI_AICTRL3     	0x0f 
+#define AICTRL3_ADC_LEFT      2
+#define AICTRL3_ADC_RIGHT     3
+#define AICTRL3_ADC_MASK      0xFFF8 //just set 3 LSB
 
 #define SM_DIFF         	0x01   
 #define SM_JUMP         	0x02   
@@ -112,6 +123,11 @@
 #define SM_ADPCM        	0x1000   
 #define SM_ADPCM_HP     	0x2000 	
 
+#define PLAYMOD_ADDR          0xC0C9 //addr write to WRAMADDR
+#define ADD_MIXER_GAIN_ADDR   0xC0CD
+#define ADD_MIXER_CONFIG_ADDR 0xC0CE
+#define PLAYMOD_MIC_FM        1 | (1<<3)     //enable admixer
+#define PLAYMOD_MP3        1                       //disable admixer
 /* Private function prototypes -----------------------------------------------*/
 void VS1063_Init(void);
 
@@ -120,6 +136,11 @@ void VS1063_PlayBeep(void);
 int waitMp3DREQ();
 void VS1063_PlayMP3_Task();
 
+void VS1063_PlaySong();
+
+void VS1063_PlayBuff();
+
+void VS1063_PrintBuff();
 #endif
 
 /*********************************************************************************************************

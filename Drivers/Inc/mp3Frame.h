@@ -17,6 +17,7 @@
 #include "tcp_udp_stack.h"
 
 #define MP3_NUM_OF_FRAME_MAX 80 //eache frame 48kbps ~ 200KB, 80 frames ~ 16KB
+#define ADU_FRAME_SIZE 432
 
 #define min(a,b) (((a)<(b))?(a):(b))
 
@@ -64,7 +65,10 @@ typedef struct Frame_Struct FrameStruct;
 void mp3GetFrame(MP3Struct *mp3Packet, int len);
 int mp3GetVol();
 FrameStruct *mp3GetNewFrame();
+FrameStruct *mp3GetHeadFrame();
 bool mp3CheckFrame(FrameStruct *frame);
 void mp3RemoveTcpFrame(FrameStruct *frame);
+
+int getCurrentNumOfFrame();
 
 #endif

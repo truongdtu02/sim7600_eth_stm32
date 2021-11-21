@@ -58,7 +58,7 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-#define DEBUG_LOG 0
+#define DEBUG_LOG 1
 #if DEBUG_LOG
 #define LOG_WRITE printf
 #else

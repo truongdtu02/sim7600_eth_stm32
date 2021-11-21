@@ -2,13 +2,18 @@
 
 int numOfMp3FrameSaving = 0;
 FrameStruct *headFrame = NULL, *curFrame = NULL;
-int newVol;
+int newVol = 98;
 int timeFrame;
 int timePacket; // = numOframe * timePerFrame
 
-#define MP3LOG printf
+#define MP3LOG
 
 int64_t curTimeDebug, offsetTimeDebug, curTimeDebugFirst = 0, curTimeDebugSecond = 0;
+
+int getCurrentNumOfFrame()
+{
+    return numOfMp3FrameSaving;
+}
 
 //get adu and frame from tcp packet and save to memory
 void mp3GetFrame(MP3Struct *mp3Packet, int len)
@@ -89,6 +94,7 @@ void mp3GetFrame(MP3Struct *mp3Packet, int len)
             newFrame->prevFrame = NULL;
 
             if (i == 0) //adu frame
+                // newFrame->data = (uint8_t *)malloc(ADU_FRAME_SIZE);
                 newFrame->data = (uint8_t *)malloc(mp3Packet->sizeOfFirstFrame);
             else //mp3 frame
                 newFrame->data = (uint8_t *)malloc(realFrameSize);
@@ -99,7 +105,21 @@ void mp3GetFrame(MP3Struct *mp3Packet, int len)
                     //copy data
                     memcpy(newFrame->data, framePtr, mp3Packet->sizeOfFirstFrame);
                     newFrame->len = mp3Packet->sizeOfFirstFrame;
+                    // newFrame->len = ADU_FRAME_SIZE;
                     framePtr += mp3Packet->sizeOfFirstFrame;
+
+                    // //change bitrate to 144kbps
+                    // newFrame->data[2] &= 0x0F;
+                    // newFrame->data[2] |= 0xD0; //0b1101 0000
+                    // //clear backpoint of playbuff
+                    // newFrame->data[4] = 0;
+
+                    //fill 0x00 byte
+                    // int i;
+                    // for(i = mp3Packet->sizeOfFirstFrame; i < ADU_FRAME_SIZE; i++)
+                    // {
+                    //     newFrame->data[i] = 0;
+                    // }
                 }
                 else
                 {
@@ -154,9 +174,29 @@ int mp3GetVol()
     return newVol;
 }
 
+FrameStruct *mp3GetHeadFrame()
+{
+    return headFrame;
+}
+
+
+//get frame has timestamp(ts), ntp-ts > 0, < 48
 FrameStruct *mp3GetNewFrame()
 {
-    MP3LOG("mp3GetNewFrame\n");
+    // MP3LOG("mp3GetNewFrame\n");
+    //check time
+    // int64_t curTime = TCP_UDP_GetNtpTime();
+    int64_t offsetTime = TCP_UDP_GetNtpTime() - headFrame->timestamp;
+    if(offsetTime < 0) 
+        return NULL;
+    else if(offsetTime < 40) 
+        return headFrame;
+    else // >= 40
+    {
+        //remove all frame to tail
+        mp3RemoveTcpFrame(headFrame);
+    }
+    
     return headFrame;
 }
 

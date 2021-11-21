@@ -393,11 +393,11 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 //  VS1063_Init();
-  VS1063_SoftReset();
+//  VS1063_SoftReset();
   while (1)
   {
-	  VS1063_PlayBeep();
-	  HAL_Delay(500);
+//	  VS1063_PlayBeep();
+//	  HAL_Delay(500);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

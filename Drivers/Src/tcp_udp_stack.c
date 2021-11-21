@@ -83,10 +83,12 @@ bool AudioPacketHandle(uint8_t *data, int len)
     if(AES_Decrypt_Packet_Key(&(mp3Packet->volume), lenPacketDecrypt, mp3Packet->aesMP3key) > 0)
     {
       mp3GetFrame(data, len);
+      return true;
     }
   }
   //wrong mp3 packet
   LOG_WRITE("mp3 packet error\n");
+  return false;
 }
 
 int realPacketLen; //len payload , not including md5

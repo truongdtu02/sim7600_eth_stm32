@@ -69,7 +69,7 @@ void sim7600_powerON()
       break;
     osDelay(10);
   }
-  osDelay(20000); //max time
+  osDelay(50000); //max time
 
   bSim7600IsRunning = true;
 }
@@ -544,7 +544,7 @@ bool sim7600_fullConfig()
   if (!sim7600_AT("AT+CIPCCFG=10,0,0,1,1,0,500\r\n", "OK", NULL, 500, 2))
     return false;
 
-  //display header when receive â€œ+RECEIVE,<link num>,<data length>â€�
+  //display header when receive â€œ+RECEIVE,<link num>,<data length>
   //AT+CIPHEAD=1 : \r\nOK\r\n
   if (!sim7600_AT("AT+CIPHEAD=1\r\n", "OK", NULL, 500, 2))
     return false;
@@ -553,6 +553,14 @@ bool sim7600_fullConfig()
   //AT+CIPSRIP=0 : \r\nOK\r\n
   if (!sim7600_AT("AT+CIPSRIP=0\r\n", "OK", NULL, 500, 2))
     return false;
+
+  //gps AT+CGPS=1,1 AT+CGPSINFO
+//  if (!sim7600_AT("AT+CGPS=1,3\r\n", "OK", NULL, 500, 2))
+//    return false;
+//
+//  if (!sim7600_AT("AT+CGPSINFO\r\n", "OK", NULL, 500, 2))
+//    return false;
+
 
   return true;
 }
@@ -720,7 +728,7 @@ void sim7600_connectTask()
       if(!sim7600_AT_notify_error("AT+CIPCLOSE=0\r\n", "OK", "+CIPCLOSE: 0,2", 10000, 2)) continue; //tcp //+CIPCLOSE: 0,0
       if(!sim7600_AT_notify_error("AT+CIPCLOSE=1\r\n", "OK", "+CIPCLOSE: 1,2", 10000, 2)) continue; //udp //+CIPCLOSE: 1,0
       //close net
-      if (!sim7600_AT_notify_error("AT+NETCLOSE\r\n", "OK", "+NETCLOSE: 2", 10000, 2)) continue; //+NETCLOSE: 0
+      if (!sim7600_AT_notify_error("AT+NETCLOSE\r\n", "OK", "ERROR", 10000, 2)) continue; //+NETCLOSE: 0
 
       //set flag to open net and tcp/udp again
       osEventFlagsSet(ConnectSimEventID, 1 << openNetEnum);
@@ -1050,7 +1058,7 @@ char listResponse[LIST_RESPONSE_SIZE][20] =
         //result check
         "RECEIVE,1,", //0 udp received
         "CIPEVENT",   //1 net error
-        "IPCLOSE",    //2 udp or tcp closed unexpectedly
+        "+IPCLOSE",    //2 udp or tcp closed unexpectedly
         "RECEIVE,0,", //3 tcp received
         "RING",        //4 call
         "CMTI",       //5 sms
