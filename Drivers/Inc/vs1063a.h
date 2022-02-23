@@ -25,6 +25,7 @@
 												   
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stm32f407xx.h"
 #include "stdint.h"
 #include "cmsis_os.h"
 #include "stdbool.h"
@@ -32,7 +33,7 @@
 
 #define VS1063_TASK_INTERVAL 10 //10ms
 
-#define MP3_DREQ_WAIT_CLKS 300000
+#define MP3_DREQ_WAIT_CLKS 300000 //cpu_clk = 168MHz -> MP3_DREQ_WAIT_CLKS ~ 2ms
 #define SPI_TIMEOUT_BYTE 50 // 50ms in worst case fCLK = 42MHZ, scale = 256
 #define SPI_TIMEOUT_ARRAY 1000 //1s
 
@@ -68,6 +69,15 @@
 #define MP3_DCS(x) x ? HAL_GPIO_WritePin(XDCS_GPIO_Port, XDCS_Pin, GPIO_PIN_SET) : HAL_GPIO_WritePin(XDCS_GPIO_Port, XDCS_Pin, GPIO_PIN_RESET)
 
 #define MP3_DREQ HAL_GPIO_ReadPin(DREQ_GPIO_Port, DREQ_Pin)
+
+#define FM_SIGNAL_Pin GPIO_PIN_12
+#define FM_SIGNAL_GPIO_Port GPIOC
+
+#define MIC_SIGNAL_Pin GPIO_PIN_8
+#define MIC_SIGNAL_GPIO_Port GPIOE
+
+#define AMPLI_EN_Pin GPIO_PIN_5
+#define AMPLI_EN_GPIO_Port GPIOE
 
 #define FM_SIGNAL HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12)
 #define MIC_SIGNAL HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_8)

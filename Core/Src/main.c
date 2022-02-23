@@ -207,6 +207,18 @@ const osMessageQueueAttr_t SendEthQueue_attributes = {
 };
 //////////////////////////
 
+///// mutex ///////////
+osMutexId_t buffTcpPacket_mtID;  
+
+const osMutexAttr_t buffTcpPacket_mtAttr = {
+  .name="buff_tcppacket"                          // human readable mutex name
+};
+//  .attr_bits=osMutexPrioInherit | osMutexRobust,    // attr_bits
+//  .cb_mem=NULL,                                     // memory for control block
+//  .cb_size=0U                                        // size for control block
+//};
+//////////////////////////
+
 ///// timer ///////////
 osTimerId_t TCPTimerOnceID; //timer for time-out handshake and KeepAlive
 
@@ -309,7 +321,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  HAL_Delay(30000); //wait for debug
+  //HAL_Delay(30000); //wait for debug
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -330,6 +342,7 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
+  buffTcpPacket_mtID = osMutexNew(&buffTcpPacket_mtAttr);
   /* USER CODE END RTOS_MUTEX */
 
   /* Create the semaphores(s) */

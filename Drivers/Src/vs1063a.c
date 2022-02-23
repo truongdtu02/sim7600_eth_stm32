@@ -8,13 +8,46 @@ bool errorVS1063A = true; //for first time init
 int volMul = 100;		  //config in flash by ep8266
 int mainVol = 98;
 
-#define VSLOG_WRITE printf
+#define VSLOG_WRITE
+
+extern PacketStruct buffTcpPacket[];
 
 //24B mono, mpeg 2, 8kbps
 // uint8_t mute2FrameData[] = {0xFF, 0xF3, 0x14, 0xC4, 0x00, 0x00, 0x00, 0x03, 0x48, 
 // 0x00, 0x00, 0x00, 0x00, 0x4C, 0x41, 0x4D, 0x45, 0x33, 0x2E, 0x31, 0x30, 0x30, 
 // 0x4C, 0x41, 0xFF, 0xF3, 0x14, 0xC4, 0x0B, 0x00, 0x00, 0x03, 0x48, 0x00, 0x00, 
 // 0x00, 0x00, 0x4D, 0x45, 0x33, 0x2E, 0x31, 0x30, 0x30, 0x55, 0x55, 0x4C, 0x41};
+
+uint8_t szBeepMP3[] = // 432
+	{
+		0xff, 0xe2, 0x19, 0xc0, 0xd4, 0x80, 0x00, 0x0a, 0x61, 0x76, 0x72, 0xe9, 0x41, 0x30, 0x01, 0x0d,
+		0xbe, 0x90, 0xcc, 0x13, 0x0f, 0xc6, 0xe3, 0xf8, 0xdf, 0xfe, 0x05, 0xfc, 0x0b, 0xc0, 0xab, 0xc8,
+		0x0b, 0xff, 0xff, 0xf6, 0x8b, 0xbf, 0xe2, 0x23, 0x2c, 0x10, 0x82, 0x18, 0xf7, 0x7a, 0xd7, 0x77,
+		0xad, 0x11, 0x8e, 0x61, 0x04, 0x00, 0x3a, 0xf0, 0xff, 0xb0, 0x04, 0xb1, 0x00, 0x00, 0x06, 0x59,
+		0xc3, 0x99, 0x00, 0x00, 0x70, 0x0b, 0x80, 0x00, 0xff, 0xe2, 0x19, 0xc0, 0xc6, 0xe8, 0x07, 0x0b,
+		0x11, 0x9e, 0xee, 0xf9, 0x81, 0x68, 0x02, 0x01, 0xb8, 0x00, 0x00, 0x39, 0x42, 0x12, 0xff, 0xff,
+		0x70, 0x0f, 0xff, 0xae, 0xbf, 0xab, 0xfe, 0xa4, 0x1b, 0xf0, 0xe5, 0x37, 0xd6, 0x1d, 0x7e, 0xa6,
+		0x7f, 0xe3, 0x30, 0xdf, 0xfe, 0x33, 0x0e, 0xbc, 0xb1, 0x97, 0xf5, 0x07, 0x7b, 0x27, 0xff, 0xff,
+		0xff, 0x25, 0x5d, 0xb8, 0xce, 0x9b, 0x0a, 0x7a, 0x9b, 0x96, 0x81, 0xaf, 0x92, 0x02, 0x83, 0x97,
+		0xff, 0xe2, 0x19, 0xc0, 0x06, 0x63, 0x13, 0x0b, 0x79, 0x7e, 0x90, 0x21, 0xc0, 0xd8, 0x00, 0xb4,
+		0xa6, 0xd4, 0xa6, 0x97, 0x1f, 0xff, 0xfe, 0x63, 0x84, 0xa9, 0x4a, 0x93, 0xe8, 0xaa, 0xe0, 0x7a,
+		0xa0, 0xe5, 0xaa, 0x4e, 0xa6, 0xb2, 0xea, 0xbc, 0x77, 0xf5, 0x00, 0xdd, 0xb0, 0x18, 0x03, 0xff,
+		0xf5, 0x90, 0x1e, 0x72, 0x2e, 0x6f, 0xff, 0xfe, 0x7c, 0xc7, 0xff, 0xa0, 0x81, 0x4c, 0x52, 0x60,
+		0x64, 0x4f, 0x09, 0x88, 0xcd, 0x93, 0xe6, 0xff, 0xff, 0xe2, 0x19, 0xc0, 0xcd, 0x5a, 0x1e, 0x0b,
+		0x69, 0x76, 0xba, 0xe0, 0x08, 0x68, 0x6c, 0xf9, 0x99, 0xba, 0x41, 0xfa, 0x00, 0x61, 0x80, 0x2d,
+		0xe8, 0xa0, 0x33, 0x05, 0x77, 0x35, 0x4f, 0x1b, 0x5b, 0x38, 0x00, 0x07, 0x1f, 0xf9, 0x85, 0x7f,
+		0xcc, 0x3f, 0x3f, 0x0a, 0xf9, 0xaf, 0xf8, 0x43, 0xff, 0xff, 0x35, 0xd6, 0xe1, 0x2b, 0x8d, 0x21,
+		0x39, 0x00, 0x64, 0x69, 0x05, 0x74, 0xf0, 0x77, 0x9d, 0x5b, 0x7f, 0xe2, 0xdf, 0x2c, 0x25, 0xf4,
+		0xff, 0xe2, 0x19, 0xc0, 0x22, 0x06, 0x29, 0x0f, 0x09, 0x7a, 0xa2, 0x38, 0x08, 0x5e, 0x6e, 0xe8,
+		0x00, 0x3c, 0x2d, 0x60, 0xe5, 0x3c, 0x71, 0x77, 0xba, 0x12, 0xff, 0xff, 0xff, 0xff, 0xfc, 0x43,
+		0xdf, 0x0d, 0x5f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xe2, 0x19, 0xc0, 0xbc, 0xd1, 0x25, 0x00,
+		0x00, 0x02, 0x5c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
 
 uint8_t muteFrameData[] = {0xFF, 0xF3, 0x14, 0xC4, 0x00, 0x00, 0x00, 0x03, 0x48, 
 0x00, 0x00, 0x00, 0x00, 0x4C, 0x41, 0x4D, 0x45, 0x33, 0x2E, 0x31, 0x30, 0x30, 
@@ -139,10 +172,18 @@ void VS1063A_TestReadWriteRAM()
 	tmp = VS1063A_ReadRAM(0xc0df); //<=2048/2
 
 //		VS1063_PlaySong();
+	waitMp3DREQ();
+	VS1063_SPI_WriteArray(szBeepMP3, sizeof(szBeepMP3));
+	VS1063_SPI_WriteArray(szBeepMP3, sizeof(szBeepMP3));
+	VS1063_SPI_WriteArray(szBeepMP3, sizeof(szBeepMP3));
+	VS1063_SPI_WriteArray(szBeepMP3, sizeof(szBeepMP3));
+
+	tmp = VS1063A_ReadRAM(0xc0df); //<=2048/2
 
 	tmp = VS1063A_ReadRAM(0xc0df); //<=2048/2
 
 	tmp = VS1063A_ReadRAM(0xc0c4);
+
 
 	tmp = VS1063A_ReadRAM(0xc0c9);
 
@@ -311,35 +352,6 @@ void VS1063_SetVol(int vol)
 //   }
 // }
 
-// uint8_t szBeepMP3[] = // 432
-// 	{
-// 		0xff, 0xe2, 0x19, 0xc0, 0xd4, 0x80, 0x00, 0x0a, 0x61, 0x76, 0x72, 0xe9, 0x41, 0x30, 0x01, 0x0d,
-// 		0xbe, 0x90, 0xcc, 0x13, 0x0f, 0xc6, 0xe3, 0xf8, 0xdf, 0xfe, 0x05, 0xfc, 0x0b, 0xc0, 0xab, 0xc8,
-// 		0x0b, 0xff, 0xff, 0xf6, 0x8b, 0xbf, 0xe2, 0x23, 0x2c, 0x10, 0x82, 0x18, 0xf7, 0x7a, 0xd7, 0x77,
-// 		0xad, 0x11, 0x8e, 0x61, 0x04, 0x00, 0x3a, 0xf0, 0xff, 0xb0, 0x04, 0xb1, 0x00, 0x00, 0x06, 0x59,
-// 		0xc3, 0x99, 0x00, 0x00, 0x70, 0x0b, 0x80, 0x00, 0xff, 0xe2, 0x19, 0xc0, 0xc6, 0xe8, 0x07, 0x0b,
-// 		0x11, 0x9e, 0xee, 0xf9, 0x81, 0x68, 0x02, 0x01, 0xb8, 0x00, 0x00, 0x39, 0x42, 0x12, 0xff, 0xff,
-// 		0x70, 0x0f, 0xff, 0xae, 0xbf, 0xab, 0xfe, 0xa4, 0x1b, 0xf0, 0xe5, 0x37, 0xd6, 0x1d, 0x7e, 0xa6,
-// 		0x7f, 0xe3, 0x30, 0xdf, 0xfe, 0x33, 0x0e, 0xbc, 0xb1, 0x97, 0xf5, 0x07, 0x7b, 0x27, 0xff, 0xff,
-// 		0xff, 0x25, 0x5d, 0xb8, 0xce, 0x9b, 0x0a, 0x7a, 0x9b, 0x96, 0x81, 0xaf, 0x92, 0x02, 0x83, 0x97,
-// 		0xff, 0xe2, 0x19, 0xc0, 0x06, 0x63, 0x13, 0x0b, 0x79, 0x7e, 0x90, 0x21, 0xc0, 0xd8, 0x00, 0xb4,
-// 		0xa6, 0xd4, 0xa6, 0x97, 0x1f, 0xff, 0xfe, 0x63, 0x84, 0xa9, 0x4a, 0x93, 0xe8, 0xaa, 0xe0, 0x7a,
-// 		0xa0, 0xe5, 0xaa, 0x4e, 0xa6, 0xb2, 0xea, 0xbc, 0x77, 0xf5, 0x00, 0xdd, 0xb0, 0x18, 0x03, 0xff,
-// 		0xf5, 0x90, 0x1e, 0x72, 0x2e, 0x6f, 0xff, 0xfe, 0x7c, 0xc7, 0xff, 0xa0, 0x81, 0x4c, 0x52, 0x60,
-// 		0x64, 0x4f, 0x09, 0x88, 0xcd, 0x93, 0xe6, 0xff, 0xff, 0xe2, 0x19, 0xc0, 0xcd, 0x5a, 0x1e, 0x0b,
-// 		0x69, 0x76, 0xba, 0xe0, 0x08, 0x68, 0x6c, 0xf9, 0x99, 0xba, 0x41, 0xfa, 0x00, 0x61, 0x80, 0x2d,
-// 		0xe8, 0xa0, 0x33, 0x05, 0x77, 0x35, 0x4f, 0x1b, 0x5b, 0x38, 0x00, 0x07, 0x1f, 0xf9, 0x85, 0x7f,
-// 		0xcc, 0x3f, 0x3f, 0x0a, 0xf9, 0xaf, 0xf8, 0x43, 0xff, 0xff, 0x35, 0xd6, 0xe1, 0x2b, 0x8d, 0x21,
-// 		0x39, 0x00, 0x64, 0x69, 0x05, 0x74, 0xf0, 0x77, 0x9d, 0x5b, 0x7f, 0xe2, 0xdf, 0x2c, 0x25, 0xf4,
-// 		0xff, 0xe2, 0x19, 0xc0, 0x22, 0x06, 0x29, 0x0f, 0x09, 0x7a, 0xa2, 0x38, 0x08, 0x5e, 0x6e, 0xe8,
-// 		0x00, 0x3c, 0x2d, 0x60, 0xe5, 0x3c, 0x71, 0x77, 0xba, 0x12, 0xff, 0xff, 0xff, 0xff, 0xfc, 0x43,
-// 		0xdf, 0x0d, 0x5f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-// 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-// 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xe2, 0x19, 0xc0, 0xbc, 0xd1, 0x25, 0x00,
-// 		0x00, 0x02, 0x5c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-// 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-// 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-// 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 // //24B mono, mpeg 2, 8kbps
 // uint8_t mute1framse[] = {0xFF, 0xF3, 0x14, 0xC4, 0x16, 0x00, 0x00, 0x03,
@@ -402,6 +414,8 @@ void VS1063_Init(void)
 	if (HAL_SPI_Init(&spiAudio) != HAL_OK)
 	{
 		Error_Handler();
+		errorVS1063A = true;
+		return;
 	}
 
 	MP3_Reset(0);
@@ -437,6 +451,8 @@ void VS1063_Init(void)
 	if (HAL_SPI_Init(&spiAudio) != HAL_OK)
 	{
 		Error_Handler();
+		errorVS1063A = true;
+		return;
 	}
 
 	VS1063_SetVol(mainVol);
@@ -470,137 +486,146 @@ bool bRunningVS1063 = false;
 int64_t startPlayTimeVS1063;
 uint32_t curFrameIdVs1063 = 0;
 int missFrame = 0;
+
+//get frame has property timestamp, check space remain in FIFO vs1063a
 void VS1063_PlayMp3Frame()
 {
-	static int pendingOffset = 0;
-	static FrameStruct muteFrame;
-	static int remainData = 0;
-	// static int missFrame = 0; //lien tuc
-
-
-	static FrameStruct *curFrame = NULL;
-	VSLOG_WRITE("* %d %d", MP3_DREQ, readDREQ());
-	for (;;)
-	{
-		if(missFrame > 50) //~1s
-		{
-			missFrame = 0;
-			bRunningVS1063 = false;
-			//soft reset
-//			VS1063_SoftReset(); //delete all fifo
-		}
-
-		if (!bRunningVS1063 && curFrame == NULL)
-		{
-			curFrame = mp3GetNewFrame();
-			if(curFrame == NULL)
-				return;
-			else
-			{
-				curFrameIdVs1063 = curFrame->id;
-				remainData = 0;
-			}
-		}
-
-		// if (curFrame == NULL)
-		// 	return; //have noting to play
-
-		//have valid frame, begin push 2048B to FIFO vs1063a
-		if (!bRunningVS1063 && curFrame != NULL)
-		{
-			if (remainData + curFrame->len < 2000)
-			{
-				remainData += curFrame->len;
-				VS1063_PlayMP3(curFrame->data, curFrame->len);
-
-				if(curFrame != &muteFrame)
-					mp3RemoveFrame(curFrame);
-
-				curFrame = mp3GetHeadFrame();
-				if(curFrame == NULL || curFrame->id > (curFrameIdVs1063 + 1))
-				{
-					curFrame = &muteFrame;
-					curFrame->id = curFrameIdVs1063 + 1;
-					curFrame->len = sizeof(muteFrameData);
-					curFrame->data = muteFrameData;
-					missFrame++;
-				}
-				else
-				{
-					if(curFrame->id < (curFrameIdVs1063 + 1)) //new session
-					{
-						curFrameIdVs1063 = curFrame->id;
-					}
-					missFrame = 0;
-				}
-				curFrameIdVs1063++;
-				continue;
-			}
-			else
-			{
-				bRunningVS1063 = true;
-				startPlayTimeVS1063 = TCP_UDP_GetNtpTime();
-			}
-		}
-
-		if(bRunningVS1063) // in running
-		{
-			//check real-time, if pendingOffset == 0
-			if (pendingOffset == 0 && curFrame == NULL)
-			{
-				curFrame = mp3GetHeadFrame();
-				if(curFrame == NULL || curFrame->id > (curFrameIdVs1063 + 1))
-				{
-					curFrame = &muteFrame;
-					curFrame->id = curFrameIdVs1063 + 1;
-					curFrame->len = sizeof(muteFrameData);
-					curFrame->data = muteFrameData;
-					missFrame++;
-				}
-				else
-				{
-					if(curFrame->id < (curFrameIdVs1063 + 1)) //new session
-					{
-						curFrameIdVs1063 = curFrame->id;
-					}
-					missFrame = 0;
-				}
-			}
-
-			if (MP3_DREQ) //can send data
-			{
-				VSLOG_WRITE("+");
-				int remainLen = curFrame->len - pendingOffset;
-				if (remainLen >= 32)
-				{
-					VS1063_PlayMP3(curFrame->data + pendingOffset, 32);
-					pendingOffset += 32;
-				}
-				else if (remainLen >= 0)
-				{
-					if (remainLen > 0)
-						VS1063_PlayMP3(curFrame->data + pendingOffset, remainLen);
-					pendingOffset = 0;
-					if(curFrame != &muteFrame)
-						mp3RemoveFrame(curFrame);
-					curFrame = NULL;
-					curFrameIdVs1063++;
-				}
-				else // <0 something wrong
-				{
-					errorVS1063A = true;
-					VSLOG_WRITE("VS1063_PlayMp3Frame error\n");
-					return;
-				}
-				continue;
-			}
-			else
-			{
-				return;
-			}
-		}
-	}
+	
 }
+
+
+//old version, two compicated
+
+// void VS1063_PlayMp3Frame_old()
+// {
+// 	static int pendingOffset = 0;
+// 	static FrameStruct muteFrame;
+// 	static int remainData = 0;
+// 	// static int missFrame = 0; //lien tuc
+// 
+// 	static FrameStruct *curFrame = NULL;
+// 	VSLOG_WRITE("* %d %d", MP3_DREQ, readDREQ());
+// 	for (;;)
+// 	{
+// 		if(missFrame > 50) //~1s
+// 		{
+// 			missFrame = 0;
+// 			bRunningVS1063 = false;
+// 			//soft reset
+// //			VS1063_SoftReset(); //delete all fifo
+// 		}
+// 
+// 		if (!bRunningVS1063 && curFrame == NULL)
+// 		{
+// 			curFrame = mp3GetNewFrame();
+// 			if(curFrame == NULL)
+// 				return;
+// 			else
+// 			{
+// 				curFrameIdVs1063 = curFrame->id;
+// 				remainData = 0;
+// 			}
+// 		}
+// 
+// 		// if (curFrame == NULL)
+// 		// 	return; //have noting to play
+// 
+// 		//have valid frame, begin push 2048B to FIFO vs1063a
+// 		if (!bRunningVS1063 && curFrame != NULL)
+// 		{
+// 			if (remainData + curFrame->len < 2000)
+// 			{
+// 				remainData += curFrame->len;
+// 				VS1063_PlayMP3(curFrame->data, curFrame->len);
+// 
+// 				if(curFrame != &muteFrame)
+// 					mp3RemoveFrame(curFrame);
+// 
+// 				curFrame = mp3GetHeadFrame();
+// 				if(curFrame == NULL || curFrame->id > (curFrameIdVs1063 + 1))
+// 				{
+// 					curFrame = &muteFrame;
+// 					curFrame->id = curFrameIdVs1063 + 1;
+// 					curFrame->len = sizeof(muteFrameData);
+// 					curFrame->data = muteFrameData;
+// 					missFrame++;
+// 				}
+// 				else
+// 				{
+// 					if(curFrame->id < (curFrameIdVs1063 + 1)) //new session
+// 					{
+// 						curFrameIdVs1063 = curFrame->id;
+// 					}
+// 					missFrame = 0;
+// 				}
+// 				curFrameIdVs1063++;
+// 				continue;
+// 			}
+// 			else
+// 			{
+// 				bRunningVS1063 = true;
+// 				startPlayTimeVS1063 = TCP_UDP_GetNtpTime();
+// 			}
+// 		}
+// 
+// 		if(bRunningVS1063) // in running
+// 		{
+// 			//check real-time, if pendingOffset == 0
+// 			if (pendingOffset == 0 && curFrame == NULL)
+// 			{
+// 				curFrame = mp3GetHeadFrame();
+// 				if(curFrame == NULL || curFrame->id > (curFrameIdVs1063 + 1))
+// 				{
+// 					curFrame = &muteFrame;
+// 					curFrame->id = curFrameIdVs1063 + 1;
+// 					curFrame->len = sizeof(muteFrameData);
+// 					curFrame->data = muteFrameData;
+// 					missFrame++;
+// 				}
+// 				else
+// 				{
+// 					if(curFrame->id < (curFrameIdVs1063 + 1)) //new session
+// 					{
+// 						curFrameIdVs1063 = curFrame->id;
+// 					}
+// 					missFrame = 0;
+// 				}
+// 			}
+// 
+// 			if (MP3_DREQ) //can send data
+// 			{
+// 				VSLOG_WRITE("+");
+// 				int remainLen = curFrame->len - pendingOffset;
+// 				if (remainLen >= 32)
+// 				{
+// 					VS1063_PlayMP3(curFrame->data + pendingOffset, 32);
+// 					pendingOffset += 32;
+// 				}
+// 				else if (remainLen >= 0)
+// 				{
+// 					if (remainLen > 0)
+// 						VS1063_PlayMP3(curFrame->data + pendingOffset, remainLen);
+// 					pendingOffset = 0;
+// 					if(curFrame != &muteFrame)
+// 						mp3RemoveFrame(curFrame);
+// 					curFrame = NULL;
+// 					curFrameIdVs1063++;
+// 				}
+// 				else // <0 something wrong
+// 				{
+// 					errorVS1063A = true;
+// 					VSLOG_WRITE("VS1063_PlayMp3Frame error\n");
+// 					return;
+// 				}
+// 				continue;
+// 			}
+// 			else
+// 			{
+// 				return;
+// 			}
+// 		}
+// 	}
+// }
 
 int state = 0;  // 2:mic, 1:fm, 0:mp3
 void VS1063_ConfigOutput()
@@ -649,18 +674,64 @@ void VS1063_ConfigOutput()
 	}
 
 	//check state to enable amplifier
-	if(!AMPLI_IS_ON && ((state == 0 && bRunningVS1063) || state != 0))
-	{
+	// if(!AMPLI_IS_ON && ((state == 0 && bRunningVS1063) || state != 0))
+	// {
+	// 	AMPLI_ON;
+	// }
+	// else if(AMPLI_IS_ON && state == 0 && !bRunningVS1063)
+	// {
+	// 	AMPLI_OFF;
+	// }
+	if(state > 0) {
 		AMPLI_ON;
-	}
-	else if(AMPLI_IS_ON && state == 0 && !bRunningVS1063)
-	{
+	} else {
 		AMPLI_OFF;
 	}
+}
+/*
+#define FM_SIGNAL_Pin GPIO_PIN_12
+#define FM_SIGNAL_GPIO_Port GPIOC
+
+#define MIC_SIGNAL_Pin GPIO_PIN_8
+#define MIC_SIGNAL_GPIO_Port GPIOE
+
+#define AMPLI_EN_Pin GPIO_PIN_5
+#define AMPLI_EN_GPIO_Port GPIOE
+*/
+void VS1063_GPIO_Init() 
+{
+  LOG_WRITE("vs1063a gpioInit\n");  
+
+  //gpio init
+  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOE);
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC);
+
+  //set default state at begin (high or low depend on hardware / circuit)
+  LL_GPIO_ResetOutputPin(AMPLI_EN_GPIO_Port, AMPLI_EN_Pin);
+
+  GPIO_InitStruct.Pin = AMPLI_EN_Pin;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN;
+  LL_GPIO_Init(AMPLI_EN_GPIO_Port, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = FM_SIGNAL_Pin;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN;
+  LL_GPIO_Init(FM_SIGNAL_GPIO_Port, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = MIC_SIGNAL_Pin;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
+  LL_GPIO_Init(MIC_SIGNAL_GPIO_Port, &GPIO_InitStruct);
 }
 
 void VS1063_PlayMP3_Task()
 {
+	//init gpio 
+	// VS1063_GPIO_Init();
 	for (;;)
 	{
 		//init , reset if has error
@@ -668,6 +739,8 @@ void VS1063_PlayMP3_Task()
 
 		//read pin MIC, FM signal, config input audio
 		VS1063_ConfigOutput();
+
+		// VS1063A_TestReadWriteRAM();
 		
 //		uint16_t tmp = VS1063A_ReadRAM(ADD_MIXER_GAIN_ADDR);
 //		tmp = VS1063A_ReadRAM(ADD_MIXER_CONFIG_ADDR);
@@ -684,9 +757,7 @@ void VS1063_PlayMP3_Task()
 				// VS1063_PlayBeep();
 
 		osDelay(VS1063_TASK_INTERVAL);
-				// osDelay(500);
-
-		
+				// osDelay(500);		
 	}
 }
 
@@ -13253,72 +13324,73 @@ void VS1063_PlayMP3_Task()
 // }
 
 //play MP3_NUM_OF_FRAME_MAX frames in mp3Frame.c
-void VS1063_PlayBuff()
-{
-	if(getCurrentNumOfFrame() != MP3_NUM_OF_FRAME_MAX) return;
-	static FrameStruct *mp3Fr = NULL;
-	static int offset = 0;
-	static bool first = true;
-	for(;;)
-	{
-		VSLOG_WRITE("%d ", MP3_DREQ);
 
-		if(mp3Fr == NULL && first)
-		{
-			mp3Fr = mp3GetHeadFrame();
-			first = false;
-			VSLOG_WRITE("fr: %d\n", mp3Fr->id);
-		}
+// void VS1063_PlayBuff()
+// {
+// 	if(getCurrentNumOfFrame() != MP3_NUM_OF_FRAME_MAX) return;
+// 	static FrameStruct *mp3Fr = NULL;
+// 	static int offset = 0;
+// 	static bool first = true;
+// 	for(;;)
+// 	{
+// 		VSLOG_WRITE("%d ", MP3_DREQ);
+// 
+// 		if(mp3Fr == NULL && first)
+// 		{
+// 			mp3Fr = mp3GetHeadFrame();
+// 			first = false;
+// 			VSLOG_WRITE("fr: %d\n", mp3Fr->id);
+// 		}
+// 
+// 		if(MP3_DREQ && mp3Fr != NULL)
+// 		{
+// 			int remain = mp3Fr->len - offset;
+// 			if(remain >= 32)
+// 			{
+// 				VS1063_PlayMP3(mp3Fr->data + offset, 32);
+// 				offset += 32;
+// 			}
+// 			else
+// 			{
+// 				VS1063_PlayMP3(mp3Fr->data + offset, remain);
+// 				offset = 0;
+// 				if(mp3Fr->nextFrame != NULL)
+// 				{
+// 					mp3Fr = mp3Fr->nextFrame;
+// 					VSLOG_WRITE("fr: %d\n", mp3Fr->id);
+// 				}
+// 				else
+// 				{
+// 					mp3Fr = NULL;
+// 					first = true;
+// 				}
+// 			}
+// 			continue;
+// 		}
+// 
+// 		break;
+// 	}
+// }
 
-		if(MP3_DREQ && mp3Fr != NULL)
-		{
-			int remain = mp3Fr->len - offset;
-			if(remain >= 32)
-			{
-				VS1063_PlayMP3(mp3Fr->data + offset, 32);
-				offset += 32;
-			}
-			else
-			{
-				VS1063_PlayMP3(mp3Fr->data + offset, remain);
-				offset = 0;
-				if(mp3Fr->nextFrame != NULL)
-				{
-					mp3Fr = mp3Fr->nextFrame;
-					VSLOG_WRITE("fr: %d\n", mp3Fr->id);
-				}
-				else
-				{
-					mp3Fr = NULL;
-					first = true;
-				}
-			}
-			continue;
-		}
-
-		break;
-	}
-}
-
-void VS1063_PrintBuff()
-{
-	if(getCurrentNumOfFrame() != MP3_NUM_OF_FRAME_MAX) return;
-
-	static FrameStruct *fr;
-	 fr = mp3GetHeadFrame();
-
-	 while (fr != NULL && fr->data != NULL)
-	 {
-		 int i;
-		for (i = 0; i < fr->len; i++)
-		{
-			VSLOG_WRITE("0x%x, ", fr->data[i]);
-		}
-		fr = fr->nextFrame;
-	 }
-	 VSLOG_WRITE("\n");
-	 fr = NULL;
-}
+// void VS1063_PrintBuff()
+// {
+// 	if(getCurrentNumOfFrame() != MP3_NUM_OF_FRAME_MAX) return;
+// 
+// 	static FrameStruct *fr;
+// 	 fr = mp3GetHeadFrame();
+// 
+// 	 while (fr != NULL && fr->data != NULL)
+// 	 {
+// 		 int i;
+// 		for (i = 0; i < fr->len; i++)
+// 		{
+// 			VSLOG_WRITE("0x%x, ", fr->data[i]);
+// 		}
+// 		fr = fr->nextFrame;
+// 	 }
+// 	 VSLOG_WRITE("\n");
+// 	 fr = NULL;
+// }
 
 /*********************************************************************************************************
       END FILE

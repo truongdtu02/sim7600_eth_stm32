@@ -69,7 +69,7 @@ void sim7600_powerON()
       break;
     osDelay(10);
   }
-  osDelay(50000); //max time
+  osDelay(10000); //max time
 
   bSim7600IsRunning = true;
 }
@@ -117,7 +117,7 @@ void sim7600_reset()
 
 void sim7600_gpio_init()
 {
-  LOG_WRITE("gpioInit\n");  
+  LOG_WRITE("sim7600 gpioInit\n");  
 
   //gpio init
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -227,7 +227,7 @@ void sim7600_init(bool isMini)
   USART_InitStruct.StopBits = LL_USART_STOPBITS_1;
   USART_InitStruct.Parity = LL_USART_PARITY_NONE;
   USART_InitStruct.TransferDirection = LL_USART_DIRECTION_TX_RX;
-  USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_CTS;
+  USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
   USART_InitStruct.OverSampling = LL_USART_OVERSAMPLING_16;
   LL_USART_Init(USART1, &USART_InitStruct);
   LL_USART_ConfigAsyncMode(USART1);
@@ -521,7 +521,7 @@ bool sim7600_fullConfig()
   restartSimstatus = 0; //reset
 
   //flow control AT+IFC=2,2 (sim_RTS, sim_CTS respectively)
-  if (!sim7600_AT("AT+IFC=2,2\r\n", "OK", NULL, 500, 2))
+  if (!sim7600_AT("AT+IFC=0,0\r\n", "OK", NULL, 500, 2))
     return false;
 
   //check sim

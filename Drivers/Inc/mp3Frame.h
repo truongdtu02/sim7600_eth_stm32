@@ -16,8 +16,12 @@
 #include "md5.h"
 #include "tcp_udp_stack.h"
 
-#define MP3_NUM_OF_FRAME_MAX 80 //eache frame 48kbps ~ 200KB, 80 frames ~ 16KB
-#define ADU_FRAME_SIZE 432
+#define TCP_PACKET_BUFF_SIZE_MAX 12 // ~60 frames //eache frame 48kbps ~ 200KB, 80 frames ~ 16KB
+#define ADU_FRAME_SIZE 432 //bytes
+
+#define WAIT_TCP_PACKET_BUFF_MUTEX 10 //10 ticks ~ 10ms
+#define MP3_FRAME_SIZE 144 //bytes
+#define NUM_OF_FRAME_IN_TCP_PACKET 5 //1ADU + 4MP3
 
 #define min(a,b) (((a)<(b))?(a):(b))
 
@@ -37,38 +41,20 @@ typedef struct
 } __attribute__ ((packed)) MP3Struct;
 //} MP3Struct;
 
-// typedef struct
-// {
-// 	FrameStruct *prevFrame, *nextFrame;
-//     int64_t timestamp;
-//     int len;
-//     uint32_t id;
-//     uint32_t session;
-//     bool isTail; //this frame can remove
-//     uint8_t *data;
-// } FrameStruct;
-
-struct Frame_Struct
+typedef struct PacketStruct
 {
     int64_t timestamp;
-	struct Frame_Struct *prevFrame;
-	struct Frame_Struct *nextFrame;
-    int len;
-    uint32_t id;
-    uint32_t session;
-    bool isTail; //this frame can remove
-    uint8_t *data;
-};
+	uint8_t mp3Frame[432 + 4 * 144];
+    int bool_isempty;
+} PacketStruct;
 
-typedef struct Frame_Struct FrameStruct;
-
-void mp3GetFrame(MP3Struct *mp3Packet, int len);
+void mp3SaveFrame(MP3Struct *mp3Packet, int len);
 int mp3GetVol();
-FrameStruct *mp3GetNewFrame();
-FrameStruct *mp3GetHeadFrame();
-bool mp3CheckFrame(FrameStruct *frame);
-void mp3RemoveTcpFrame(FrameStruct *frame);
+// FrameStruct *mp3GetNewFrame();
+// FrameStruct *mp3GetHeadFrame();
+// bool mp3CheckFrame(FrameStruct *frame);
+// void mp3RemoveTcpFrame(FrameStruct *frame);
 
-int getCurrentNumOfFrame();
+int getCurrentNumOfPacket();
 
 #endif

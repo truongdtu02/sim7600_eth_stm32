@@ -82,7 +82,7 @@ bool AudioPacketHandle(uint8_t *data, int len)
     lenPacketDecrypt -=  (lenPacketDecrypt % 16); //make sure it is multiple of 16 aes block len
     if(AES_Decrypt_Packet_Key(&(mp3Packet->volume), lenPacketDecrypt, mp3Packet->aesMP3key) > 0)
     {
-      mp3GetFrame(data, len);
+      mp3SaveFrame(data, len);
       return true;
     }
   }
@@ -464,7 +464,7 @@ void UDP_Packet_Analyze(uint8_t *data, int len)
   }
 }
 
-//get UTC NTP time
+//get UTC NTP time in ms
 int64_t TCP_UDP_GetNtpTime()
 {
   if(ntpTime == 0) return 0; //don't have ntp time
