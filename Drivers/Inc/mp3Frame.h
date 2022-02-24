@@ -19,6 +19,8 @@
 #define TCP_PACKET_BUFF_SIZE_MAX 12 // ~60 frames //eache frame 48kbps ~ 200KB, 80 frames ~ 16KB
 #define ADU_FRAME_SIZE 432 //bytes
 
+#define MP3_BLOCK_SIZE (432 + 144*4)
+
 #define WAIT_TCP_PACKET_BUFF_MUTEX 10 //10 ticks ~ 10ms
 #define MP3_FRAME_SIZE 144 //bytes
 #define NUM_OF_FRAME_IN_TCP_PACKET 5 //1ADU + 4MP3

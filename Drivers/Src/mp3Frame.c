@@ -218,7 +218,7 @@ void mp3SaveFrame(MP3Struct *mp3Packet, int len)
 
     MP3LOG("mp3 packet offsetTime %ld\n", offsetTime);
 
-    if (offsetTime <= 0) //packet come slow, need remove some frames
+    if (offsetTime <= 24) //packet come slow, need remove some frames
     {
         MP3LOG("mp3 packet timeout\n");
         return;
@@ -227,6 +227,9 @@ void mp3SaveFrame(MP3Struct *mp3Packet, int len)
     osStatus_t status = osMutexAcquire(buffTcpPacket_mtID, WAIT_TCP_PACKET_BUFF_MUTEX);
     if(status == osOK) { //acquire success
         if(buffTcpPacket[buffTcpPacket_wrindex].bool_isempty) {
+            //get timestampe
+            buffTcpPacket[buffTcpPacket_wrindex].timestamp = mp3Packet->timestamp;
+            
             //save packet
             //adu first
             //copy data
@@ -256,6 +259,10 @@ void mp3SaveFrame(MP3Struct *mp3Packet, int len)
                 framePtr += mp3Packet->frameSize;
                 mp3Ptr += MP3_FRAME_SIZE;
             }
+            buffTcpPacket[buffTcpPacket_wrindex].bool_isempty = 0;
+            buffTcpPacket_wrindex++;
+            if(buffTcpPacket_wrindex >= TCP_PACKET_BUFF_SIZE_MAX)
+                buffTcpPacket_wrindex = 0;
         }
         osMutexRelease(buffTcpPacket_mtID);
     }
@@ -265,6 +272,61 @@ int mp3GetVol()
 {
     // MP3LOG("mp3GetVol\n");
     return newVol;
+}
+
+//mp3 get frame, if frame is out_of_time remove(empty=1), if 
+int mp3GetFrame(uint8_t buf, int buf_size) {
+    if(buf_size != (MP3_BLOCK_SIZE))
+        return -1;
+    
+    int64_t curTime = 0, offset = 0;
+    int error = 0;
+    //check timestamp of current 
+    //check time, before save
+
+    osStatus_t status = osMutexAcquire(buffTcpPacket_mtID, WAIT_TCP_PACKET_BUFF_MUTEX);
+    if(status != osOK)
+        return -1;
+
+    for(;;) {
+        curTime = TCP_UDP_GetNtpTime();
+        if(curTime == 0) { //don't have ntp time
+            error = 1;
+            break; 
+        }
+        if(buffTcpPacket[buffTcpPacket_rdindex].bool_isempty) {
+            error = 1;
+            break;
+        }
+        //else
+        offset = buffTcpPacket[buffTcpPacket_rdindex].timestamp - curTime;
+        if(offset > (5*24)) { //two soon to get this frame
+            error = 1;
+            break;
+        }
+        else if(offset < 0) {
+            //this frame is out_of_time need to remove
+            buffTcpPacket[buffTcpPacket_rdindex].bool_isempty = 1;
+            buffTcpPacket[buffTcpPacket_rdindex].timestamp = 0;
+            buffTcpPacket_rdindex++;
+            if(buffTcpPacket_rdindex >= TCP_PACKET_BUFF_SIZE_MAX)
+                buffTcpPacket_rdindex = 0;
+            continue;
+        } else {
+            //this frame is siutable
+            memcpy(buf, buffTcpPacket[buffTcpPacket_rdindex].mp3Frame, buf_size);
+            //this frame is used need to remove
+            buffTcpPacket[buffTcpPacket_rdindex].bool_isempty = 1;
+            buffTcpPacket[buffTcpPacket_rdindex].timestamp = 0;
+            buffTcpPacket_rdindex++;
+            if(buffTcpPacket_rdindex >= TCP_PACKET_BUFF_SIZE_MAX)
+                buffTcpPacket_rdindex = 0;
+            break;
+        }
+    }
+
+    osMutexRelease(buffTcpPacket_mtID);
+    return (-error);
 }
 
 // FrameStruct *mp3GetHeadFrame()

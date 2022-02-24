@@ -1,6 +1,7 @@
 //run with RTOS
 
 #include "vs1063a.h"
+#include "mp3Frame.h"
 extern SPI_HandleTypeDef hspi2;
 #define spiAudio hspi2
 #define vs1063Delay osDelay
@@ -490,7 +491,21 @@ int missFrame = 0;
 //get frame has property timestamp, check space remain in FIFO vs1063a
 void VS1063_PlayMp3Frame()
 {
-	
+	static uint8_t bufmp3[MP3_BLOCK_SIZE];
+	//read sdiFree FIFO
+	int32_t sdiFree; 
+	sdiFree = VS1063A_ReadRAM(0xc0df); //<=2048/2
+	sdiFree = VS1063A_ReadRAM(0xc0df); //<=2048/2
+
+	if(sdiFree < 1023) //not enough memory to push in
+		return;
+
+	if(mp3GetFrame(bufmp3, sizeof(bufmp3)) == 0) {
+		//push frame to FIFO
+		VS1063_PlayMP3(bufmp3, sizeof(bufmp3));
+		sdiFree = VS1063A_ReadRAM(0xc0df); //<=2048/2
+		sdiFree = VS1063A_ReadRAM(0xc0df); //<=2048/2
+	}
 }
 
 
@@ -734,30 +749,17 @@ void VS1063_PlayMP3_Task()
 	// VS1063_GPIO_Init();
 	for (;;)
 	{
-		//init , reset if has error
-		VS1063_Init();
-
-		//read pin MIC, FM signal, config input audio
-		VS1063_ConfigOutput();
-
-		// VS1063A_TestReadWriteRAM();
-		
-//		uint16_t tmp = VS1063A_ReadRAM(ADD_MIXER_GAIN_ADDR);
-//		tmp = VS1063A_ReadRAM(ADD_MIXER_CONFIG_ADDR);
-//		tmp = VS1063A_ReadRAM(ADD_MIXER_CONFIG_ADDR);
-		// VS1063A_WriteRAM(ADD_MIXER_GAIN_ADDR, 5);
-
-
-		//play mp3
-		 VS1063_PlayMp3Frame();
-		// VS1063_PlaySong();
-//		VS1063_PlayBuff();
-//		VS1063_PrintBuff();
-
-				// VS1063_PlayBeep();
-
-		osDelay(VS1063_TASK_INTERVAL);
-				// osDelay(500);		
+// 		//init , reset if has error
+// 		VS1063_Init();
+// 
+// 		//read pin MIC, FM signal, config input audio
+// 		VS1063_ConfigOutput();
+// 
+// 		//play mp3
+// 		 VS1063_PlayMp3Frame();
+		VS1063_PlayMP3(szBeepMP3, sizeof(szBeepMP3));
+// 		osDelay(VS1063_TASK_INTERVAL);
+		osDelay(500);		
 	}
 }
 
