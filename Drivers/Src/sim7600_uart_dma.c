@@ -502,7 +502,8 @@ bool sim7600_miniConfig()
 
   return true;
 }
-
+int baudrate_arr[] = {300, 600, 1200, 2400, 4800, 9600, 19200,
+38400, 57600, 115200, 230400, 460800, 921600, 3000000};
 //full config for internet
 bool sim7600_fullConfig()
 {
@@ -512,7 +513,23 @@ bool sim7600_fullConfig()
   // sprintf(sim7600_cmd_buff, "AT+IPR=%d\r\n", SIM7600_BAUDRATE_MAIN); //temporarily
   sprintf(sim7600_cmd_buff, "AT+IPREX=%d\r\n", SIM7600_BAUDRATE_MAIN); //permantly, prevent receive "...SMS DONE..." after reboot/power-up
   sim7600_AT(sim7600_cmd_buff, "OK", NULL, 500, 2);              //don't check for the first config
-  sim7600_change_baud(SIM7600_BAUDRATE_MAIN);
+  
+  // int j;
+  // for(j = 0; j < sizeof(baudrate_arr) / 4; j++) {
+  //   sim7600_change_baud(baudrate_arr[j]);
+  //   osDelay(10);
+  //   if (sim7600_AT("ATE0\r\n", "OK", NULL, 500, 2)) {
+  //     printf("oke\n");
+  //   }
+  // }
+  // j = 0;
+  // for(j = 0; j < sizeof(baudrate_arr) / 4; j++) {
+  //   sim7600_change_baud(baudrate_arr[j]);
+  //   osDelay(10);
+  //   if (sim7600_AT("ATE0\r\n", "OK", NULL, 500, 2)) {
+  //     printf("oke\n");
+  //   }
+  // }
   if (!sim7600_AT(sim7600_cmd_buff, "OK", NULL, 500, 2))
     return false;
   //echo cmd off
