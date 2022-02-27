@@ -76,14 +76,16 @@ bool AudioPacketHandle(uint8_t *data, int len)
   mp3Packet = (MP3Struct*)data;
 
   //decrypt 16B next with old aes key to get new key
-  if(AES_Decrypt_Packet(data + 16, 16) > 0)
+  // if(AES_Decrypt_Packet(data + 16, 16) > 0)
+  if(1)
   {
     //decrypt with mp3 key, from volume
     int lenPacketDecrypt = len - MP3_PACKET_HEADER_LEN_BEFORE_VOLUME;
     lenPacketDecrypt -=  (lenPacketDecrypt % 16); //make sure it is multiple of 16 aes block len
-    if(AES_Decrypt_Packet_Key(&(mp3Packet->volume), lenPacketDecrypt, mp3Packet->aesMP3key) > 0)
+    // if(AES_Decrypt_Packet_Key(&(mp3Packet->volume), lenPacketDecrypt, mp3Packet->aesMP3key) > 0)
+    if(1)
     {
-      mp3SaveFrame(data, len);
+      mp3SaveFrame(mp3Packet, len);
       return true;
     } else
       packet_decrypt_error2++;
@@ -96,12 +98,12 @@ bool AudioPacketHandle(uint8_t *data, int len)
 
 int realPacketLen; //len payload , not including md5
 int totalTCPBytes = 0;
-int packet_md5_error1 = 0, packet_md5_error2 = 0, packet_md5_error3 = 0;
-void TCP_Packet_Handle()
+int packet_md5_error1 = 0, packet_md5_error2 = 0, packet_md5_error3 = 0, packet_len_error = 0;
+void TCP_Packet_Handle(uint8_t *data, int data_len)
 {
   LOG_WRITE("tcpPacketHdl\n");
   ISError = true;
-  PacketTCPStruct *packetTcpHeader = (PacketTCPStruct *)TcpBuff;
+  PacketTCPStruct *packetTcpHeader = (PacketTCPStruct *)data;
   // totalTCPBytes += packetTcpHeader->len;
   realPacketLen = packetTcpHeader->len - SIZE_OF_MD5;
   if (!IsTLSHanshaked)
@@ -168,10 +170,16 @@ void TCP_Packet_Handle()
   {
     ISError = false;
 
+    //check length
+    if(packetTcpHeader->len + 2 != data_len) {
+      packet_len_error++;
+      return;
+    }
+
     totalTCPBytes += packetTcpHeader->len;
     //debug
-    int *order = (int*)(TcpBuff + 4);
-    int llen = packetTcpHeader->len + 4; // + 4B len
+    // int *order = (int*)(TcpBuff + 4);
+    // int llen = packetTcpHeader->len + 4; // + 4B len
     // LOG_WRITE("mp3 len:%d\n", llen - 4);
     // return;
 
@@ -180,13 +188,15 @@ void TCP_Packet_Handle()
     //   LOG_WRITE("error tcp packet len:%d\n", packetTcpHeader->len);
     // }
 
-    if(CheckMD5(packetTcpHeader))
+    // if(CheckMD5(packetTcpHeader))
+    if(1)
     {
       //check payload has at least 16B (1 AES block)
       if(realPacketLen >= AES128_BLOCK_LEN)
       {
         //decrype first 16B to check type of packet
-        if(AES_Decrypt_Packet(packetTcpHeader->payload, AES128_BLOCK_LEN) > 0)
+        // if(AES_Decrypt_Packet(packetTcpHeader->payload, AES128_BLOCK_LEN) > 0)
+        if(1)
         {
           uint8_t typeOfPacket = packetTcpHeader->payload[0];
           if(typeOfPacket == mp3PacketEnum && realPacketLen > MP3_PACKET_HEADER_LEN)

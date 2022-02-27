@@ -664,20 +664,20 @@ void VS1063_ConfigOutput()
 
 		state = 2;
 	}
-	else if(FM_SIGNAL && state != 1)
-	{
-		if(state == 0)
-		{
-			VS1063A_WriteRAM(PLAYMOD_ADDR, PLAYMOD_MIC_FM);
-			//turn off volume
-			VS1063_SetVol(0);
-		}
-		//set right channel
-		uint16_t tmp = VS1063_ReadReg(SPI_AICTRL3);
-		VS1063_WriteReg(SPI_AICTRL3, (tmp & AICTRL3_ADC_MASK) | AICTRL3_ADC_RIGHT);
-
-		state = 1;
-	}
+// 	else if(FM_SIGNAL && state != 1)
+// 	{
+// 		if(state == 0)
+// 		{
+// 			VS1063A_WriteRAM(PLAYMOD_ADDR, PLAYMOD_MIC_FM);
+// 			//turn off volume
+// 			VS1063_SetVol(0);
+// 		}
+// 		//set right channel
+// 		uint16_t tmp = VS1063_ReadReg(SPI_AICTRL3);
+// 		VS1063_WriteReg(SPI_AICTRL3, (tmp & AICTRL3_ADC_MASK) | AICTRL3_ADC_RIGHT);
+// 
+// 		state = 1;
+// 	}
 	else if(MIC_SIGNAL && !FM_SIGNAL && state != 0)
 	{
 		VS1063A_WriteRAM(PLAYMOD_ADDR, PLAYMOD_MP3);

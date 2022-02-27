@@ -340,7 +340,7 @@ int mp3GetVol()
 }
 
 //mp3 get frame, if frame is out_of_time remove(empty=1), if 
-int miss_get_frame = 0;
+int miss_get_frame = 0, offset_get_frame = 0, offset_get_frame_lowest = 1000;
 int mp3GetFrame(uint8_t *buf, int buf_size) {
     static int oldSession = -1, oldID = -1;
     
@@ -370,6 +370,9 @@ int mp3GetFrame(uint8_t *buf, int buf_size) {
         }
         //else
         offset = buffTcpPacket[buffTcpPacket_rdindex].timestamp - curTime;
+        offset_get_frame = offset;
+        if(offset_get_frame < offset_get_frame_lowest)
+            offset_get_frame_lowest = offset_get_frame;
         if(offset > (5*24)) { //two soon to get this frame
             error = 1;
             break;
