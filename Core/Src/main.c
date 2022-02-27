@@ -255,7 +255,7 @@ void CallbackTimerPeriodic(void *argument);
 void CallbackTimerOnce(void *argument);
 
 /* USER CODE BEGIN PFP */
-char* DeviceID = "123456781234567812345678";
+char* DeviceID = "123456781234567812345679";
 
 // #if DEBUG_LOG
 int _write(int32_t file, uint8_t *ptr, int32_t len)

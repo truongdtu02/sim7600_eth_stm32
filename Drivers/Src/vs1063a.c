@@ -489,6 +489,7 @@ uint32_t curFrameIdVs1063 = 0;
 int missFrame = 0;
 
 //get frame has property timestamp, check space remain in FIFO vs1063a
+int playTime = 0;
 void VS1063_PlayMp3Frame()
 {
 	static uint8_t bufmp3[MP3_BLOCK_SIZE];
@@ -497,7 +498,7 @@ void VS1063_PlayMp3Frame()
 	sdiFree = VS1063A_ReadRAM(0xc0df); //<=2048/2
 	sdiFree = VS1063A_ReadRAM(0xc0df); //<=2048/2
 
-	if(sdiFree < 1023) //not enough memory to push in
+	if(sdiFree < 576) //not enough memory to push in
 		return;
 
 	if(mp3GetFrame(bufmp3, sizeof(bufmp3)) == 0) {
@@ -505,7 +506,11 @@ void VS1063_PlayMp3Frame()
 		VS1063_PlayMP3(bufmp3, sizeof(bufmp3));
 		sdiFree = VS1063A_ReadRAM(0xc0df); //<=2048/2
 		sdiFree = VS1063A_ReadRAM(0xc0df); //<=2048/2
+		playTime += 5 * 24;
 	}
+//	if(waitMp3DREQ() == 0)
+//		return;
+	// VS1063_PlayMP3(szBeepMP3, sizeof(szBeepMP3));
 }
 
 
@@ -750,16 +755,16 @@ void VS1063_PlayMP3_Task()
 	for (;;)
 	{
 // 		//init , reset if has error
-// 		VS1063_Init();
+		VS1063_Init();
 // 
 // 		//read pin MIC, FM signal, config input audio
-// 		VS1063_ConfigOutput();
+		VS1063_ConfigOutput();
 // 
 // 		//play mp3
-// 		 VS1063_PlayMp3Frame();
-		VS1063_PlayMP3(szBeepMP3, sizeof(szBeepMP3));
-// 		osDelay(VS1063_TASK_INTERVAL);
-		osDelay(500);		
+		 VS1063_PlayMp3Frame();
+		// VS1063_PlayMP3(szBeepMP3, sizeof(szBeepMP3));
+		osDelay(VS1063_TASK_INTERVAL);
+		// osDelay(500);		
 	}
 }
 

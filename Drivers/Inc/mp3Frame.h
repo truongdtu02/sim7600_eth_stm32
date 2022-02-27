@@ -17,9 +17,9 @@
 #include "tcp_udp_stack.h"
 
 #define TCP_PACKET_BUFF_SIZE_MAX 12 // ~60 frames //eache frame 48kbps ~ 200KB, 80 frames ~ 16KB
-#define ADU_FRAME_SIZE 432 //bytes
+#define ADU_FRAME_SIZE 144 //bytes
 
-#define MP3_BLOCK_SIZE (432 + 144*4)
+#define MP3_BLOCK_SIZE (ADU_FRAME_SIZE + 144*4)
 
 #define WAIT_TCP_PACKET_BUFF_MUTEX 10 //10 ticks ~ 10ms
 #define MP3_FRAME_SIZE 144 //bytes
@@ -46,8 +46,10 @@ typedef struct
 typedef struct PacketStruct
 {
     int64_t timestamp;
-	uint8_t mp3Frame[432 + 4 * 144];
+	uint8_t mp3Frame[144 + 4 * 144];
     int bool_isempty;
+    uint32_t frameID;
+    uint32_t session;
 } PacketStruct;
 
 void mp3SaveFrame(MP3Struct *mp3Packet, int len);

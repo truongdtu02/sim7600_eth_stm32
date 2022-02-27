@@ -227,7 +227,7 @@ void sim7600_init(bool isMini)
   USART_InitStruct.StopBits = LL_USART_STOPBITS_1;
   USART_InitStruct.Parity = LL_USART_PARITY_NONE;
   USART_InitStruct.TransferDirection = LL_USART_DIRECTION_TX_RX;
-  USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
+  USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_RTS_CTS; //LL_USART_HWCONTROL_NONE;
   USART_InitStruct.OverSampling = LL_USART_OVERSAMPLING_16;
   LL_USART_Init(USART1, &USART_InitStruct);
   LL_USART_ConfigAsyncMode(USART1);
@@ -521,7 +521,7 @@ bool sim7600_fullConfig()
   restartSimstatus = 0; //reset
 
   //flow control AT+IFC=2,2 (sim_RTS, sim_CTS respectively)
-  if (!sim7600_AT("AT+IFC=0,0\r\n", "OK", NULL, 500, 2))
+  if (!sim7600_AT("AT+IFC=2,2\r\n", "OK", NULL, 500, 2))
     return false;
 
   //check sim
@@ -532,8 +532,10 @@ bool sim7600_fullConfig()
 
   // set timeout value for AT+NETOPEN/AT+CIPOPEN/AT+CIPSEND
   //AT+CIPTIMEOUT=10000,10000,5000 ~ 10s, 10s, 5s
-  if (!sim7600_AT("AT+CIPTIMEOUT=10000,10000,5000\r\n", "OK", NULL, 500, 2))
-    return false;
+  if (!sim7600_AT("AT+CIPTIMEOUT=10000,10000,5000\r\n", "OK", NULL, 500, 2)) {
+	  printf("f1\n");
+	  //return false;
+  }
 
   //config parameters of socket
   //10 times retranmission IP packet, no(0) delay to output data received
@@ -541,8 +543,10 @@ bool sim7600_fullConfig()
   //1:add data header, the format is â€œ+RECEIVE,<link num>,<data length>â€�
   //< AsyncMode > = 0
   //minimum retransmission timeout value for TCP connection in ms : 500
-  if (!sim7600_AT("AT+CIPCCFG=10,0,0,1,1,0,500\r\n", "OK", NULL, 500, 2))
-    return false;
+  if (!sim7600_AT("AT+CIPCCFG=10,0,0,1,1,0,500\r\n", "OK", NULL, 500, 2)){
+	  printf("f2\n");
+	  //return false;
+  }
 
   //display header when receive â€œ+RECEIVE,<link num>,<data length>
   //AT+CIPHEAD=1 : \r\nOK\r\n
@@ -560,7 +564,6 @@ bool sim7600_fullConfig()
 //
 //  if (!sim7600_AT("AT+CGPSINFO\r\n", "OK", NULL, 500, 2))
 //    return false;
-
 
   return true;
 }

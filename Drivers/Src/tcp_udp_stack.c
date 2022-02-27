@@ -15,7 +15,7 @@ bool IsTLSHanshaked = false;
 bool ISError = false;
 
 uint8_t TcpBuff[TCP_BUFF_LEN];
-int TcpBuffOffset = 0;
+int TcpBuffOffset = 0, TcpBuffLen = 0;
 bool bIsPending = false;
 int remainData = 0; //reamin data need to collect
 
@@ -70,6 +70,7 @@ bool TCP_UDP_Send(int type, uint8_t *data, int len)
 }
 
 MP3Struct *mp3Packet;
+int packet_decrypt_error1 = 0, packet_decrypt_error2 = 0;
 bool AudioPacketHandle(uint8_t *data, int len)
 {
   mp3Packet = (MP3Struct*)data;
@@ -84,8 +85,10 @@ bool AudioPacketHandle(uint8_t *data, int len)
     {
       mp3SaveFrame(data, len);
       return true;
-    }
-  }
+    } else
+      packet_decrypt_error2++;
+  } else
+    packet_decrypt_error1++;
   //wrong mp3 packet
   LOG_WRITE("mp3 packet error\n");
   return false;
@@ -93,12 +96,13 @@ bool AudioPacketHandle(uint8_t *data, int len)
 
 int realPacketLen; //len payload , not including md5
 int totalTCPBytes = 0;
+int packet_md5_error1 = 0, packet_md5_error2 = 0, packet_md5_error3 = 0;
 void TCP_Packet_Handle()
 {
   LOG_WRITE("tcpPacketHdl\n");
   ISError = true;
   PacketTCPStruct *packetTcpHeader = (PacketTCPStruct *)TcpBuff;
-  totalTCPBytes += packetTcpHeader->len;
+  // totalTCPBytes += packetTcpHeader->len;
   realPacketLen = packetTcpHeader->len - SIZE_OF_MD5;
   if (!IsTLSHanshaked)
   {
@@ -164,10 +168,12 @@ void TCP_Packet_Handle()
   {
     ISError = false;
 
+    totalTCPBytes += packetTcpHeader->len;
     //debug
     int *order = (int*)(TcpBuff + 4);
     int llen = packetTcpHeader->len + 4; // + 4B len
-    LOG_WRITE("mp3 len:%d\n", llen - 4);
+    // LOG_WRITE("mp3 len:%d\n", llen - 4);
+    // return;
 
     // if(packetTcpHeader->len < 1000)
     // {
@@ -191,8 +197,12 @@ void TCP_Packet_Handle()
           {
             
           }
-        }
-      }
+        } else
+          packet_md5_error3++;
+      } else
+        packet_md5_error2++;
+    } else {
+      packet_md5_error1++;
     }
   }
   
@@ -205,81 +215,17 @@ void TCP_Packet_Handle()
 }
 
 int old_packet_len;
-// void TCP_Packet_Analyze(uint8_t *tcpPacket, int length)
-// {
-//   LOG_WRITE("tcpPacketAnalyze\n");
-//   PacketTCPStruct *packetTcpHeader = (PacketTCPStruct *)TcpBuff;
-//   while (length > 0)
-//   {
-//     //beggin get length of packet
-//     if (!bIsPending)
-//     {
-//       //barely occur, not enough data tp detect lenght of TCP packet
-//       if ((TcpBuffOffset + length) < SIZE_OF_LEN)
-//       {
-//         memcpy(TcpBuff + TcpBuffOffset, tcpPacket, length);
-//         length = 0;
-//         TcpBuffOffset += length;
-//         LOG_WRITE("(TcpBuffOffset + length) < SIZE_OF_LEN\n");
-//       }
-//       //else enough data to detect
-//       else
-//       {
-//         //copy just enough
-//         int tmpOffset = SIZE_OF_LEN - TcpBuffOffset;
-//         memcpy(TcpBuff + TcpBuffOffset, tcpPacket, tmpOffset);
-//         TcpBuffOffset = SIZE_OF_LEN;
-//         length -= tmpOffset;
-//         tcpPacket += tmpOffset;
-//         bIsPending = true;
-//
-//         remainData = packetTcpHeader->len;
-//         LOG_WRITE("tcpPacketLen %d\n", remainData);
-//         //data is so big, sth wrong
-//         if (remainData > TCP_BUFF_LEN || remainData < 0)
-//         {
-//           LOG_WRITE("TCP packet len error\n");
-//           TCP_UDP_Notify(TCP_UDP_Flag.Error);
-//           return;
-//         }
-//         old_packet_len = remainData;
-//       }
-//     }
-//     //got length, continue collect data
-//     else
-//     {
-//       //save to buff
-//       if (length < remainData) //not enough data to get
-//       {
-//         memcpy(TcpBuff + TcpBuffOffset, tcpPacket, length);
-//         TcpBuffOffset += length;
-//         remainData -= length;
-//         length = 0;
-//       }
-//       else
-//       {
-//         //done packet
-//         memcpy(TcpBuff + TcpBuffOffset, tcpPacket, remainData);
-//         length -= remainData;
-//         tcpPacket += remainData;
-//         TcpBuffOffset = 0; //reset
-//         bIsPending = false;
-//         TCP_Packet_Handle();
-//       }
-//     }
-//   }
-// }
 
 //convert hex string to byte array, auto override. return len of byte array if success, else return -1
 uint8_t hexStringMap[255];
-bool bHexStringMapFrist = true;
+int bHexStringMapFrist = 1;
 
-int HexStringToByteArray()
+int HexStringToByteArray(int start, int stop)
 {
   //initialize
   if(bHexStringMapFrist)
-  {
-    bHexStringMapFrist = false;
+  {                            
+    bHexStringMapFrist = 0;
     for(int i = 0; i < 255; i++)
     {
       if(i >= '0' && i <= '9')
@@ -294,20 +240,21 @@ int HexStringToByteArray()
       {
         hexStringMap[i] = i - 'a' + 10;
       }
-      else
-      {
-        hexStringMap[i] = 0;
-      }
+      // else
+      // {
+      //   hexStringMap[i] = 0;
+      // }
     }
   }
 
-  int i, j; //i for hex string, j for byte array
-  for(i = 0, j = 0; i < TcpBuffOffset; i+=2, j++)
-  {
-    uint8_t tmpByte = (hexStringMap[TcpBuff[i]] << 4) | hexStringMap[TcpBuff[i+1]];
-    TcpBuff[j] = tmpByte;
-  }
-  return j;
+    uint8_t tmpByte;
+    int i, j = 0; //i for hex string, j for byte array
+    for(i = start; i < stop; i+=2)
+    {
+        tmpByte = (hexStringMap[TcpBuff[i]] << 4) | hexStringMap[TcpBuff[i+1]];
+        TcpBuff[j++] = tmpByte;
+    }
+    return j;
 }
 
 //retrun >0 ~ successful, -1~fail
@@ -349,62 +296,102 @@ int HexStringToByteArrayUDP(uint8_t *data, int len)
 }
 
 //packet string hex
+// void TCP_Packet_Analyze(uint8_t *recvData, int length)
+// {
+//   int upper = length;
+//   int offset = 0;
+//   while (length > 0)
+//   {
+//     int eofPackIndx = -1;
+// 
+//     for (int i = offset; i < upper; i++)
+//     {
+//       if (recvData[i] == '#')
+//       {
+//         eofPackIndx = i;
+//         break;
+//       }
+//     }
+//     if (eofPackIndx == -1) //not find "#"
+//     {
+//       if (TcpBuffOffset + length < TCP_BUFF_LEN)
+//       {
+//         // System.Buffer.BlockCopy(recvData, offset, Tcpbuff, TcpbuffOffset, length);
+//         memcpy(TcpBuff + TcpBuffOffset, recvData + offset, length);
+//         TcpBuffOffset += length;
+//         length = 0;
+//       }
+//     }
+//     else
+//     {
+//       int lenTmp = eofPackIndx - offset; // 0 1 2 3 4
+//       if (lenTmp > 0 && TcpBuffOffset + lenTmp < TCP_BUFF_LEN)
+//       {
+//         // System.Buffer.BlockCopy(recvData, offset, Tcpbuff, TcpbuffOffset, lenTmp);
+//         memcpy(TcpBuff + TcpBuffOffset, recvData + offset, lenTmp);
+//         TcpBuffOffset += lenTmp;
+//       }
+//       offset = eofPackIndx + 1; //+1 for "#"
+//       length -= (lenTmp + 1);     // +1 for "#"
+// 
+//       //handle tcp packet
+//       if (TcpBuffOffset % 2 == 0) //byte to hex string -> double length of packet
+//       {
+//         //TcpbuffOffset ~ length of Tcp packet
+//         //convert hex string to byte array
+//         TcpBuffOffset = HexStringToByteArray();
+// 
+//         //check length field
+//         int lenOfPacket = (int)(*(uint16_t *)TcpBuff);
+//         if (lenOfPacket == TcpBuffOffset - 2) //2 byte of length field
+//         {
+// //          curPacketSize = lenOfPacket;s
+//           TCP_Packet_Handle();
+//         }
+//       }
+//       TcpBuffOffset = 0;
+//     }
+//   }
+// }
+
 void TCP_Packet_Analyze(uint8_t *recvData, int length)
 {
-  int upper = length;
-  int offset = 0;
-  while (length > 0)
-  {
-    int eofPackIndx = -1;
+    int pos_start = 0, i, endOfPack, j;
 
-    for (int i = offset; i < upper; i++)
-    {
-      if (recvData[i] == '#')
-      {
-        eofPackIndx = i;
-        break;
-      }
-    }
-    if (eofPackIndx == -1) //not find "#"
-    {
-      if (TcpBuffOffset + length < TCP_BUFF_LEN)
-      {
-        // System.Buffer.BlockCopy(recvData, offset, Tcpbuff, TcpbuffOffset, length);
-        memcpy(TcpBuff + TcpBuffOffset, recvData + offset, length);
-        TcpBuffOffset += length;
-        length = 0;
-      }
-    }
-    else
-    {
-      int lenTmp = eofPackIndx - offset; // 0 1 2 3 4
-      if (lenTmp > 0 && TcpBuffOffset + lenTmp < TCP_BUFF_LEN)
-      {
-        // System.Buffer.BlockCopy(recvData, offset, Tcpbuff, TcpbuffOffset, lenTmp);
-        memcpy(TcpBuff + TcpBuffOffset, recvData + offset, lenTmp);
-        TcpBuffOffset += lenTmp;
-      }
-      offset = eofPackIndx + 1; //+1 for "#"
-      length -= (lenTmp + 1);     // +1 for "#"
+    //step 1
+    memcpy(TcpBuff + TcpBuffLen, recvData, length);
+    TcpBuffLen += length;
 
-      //handle tcp packet
-      if (TcpBuffOffset % 2 == 0) //byte to hex string -> double length of packet
-      {
-        //TcpbuffOffset ~ length of Tcp packet
-        //convert hex string to byte array
-        TcpBuffOffset = HexStringToByteArray();
-
-        //check length field
-        int lenOfPacket = (int)(*(uint16_t *)TcpBuff);
-        if (lenOfPacket == TcpBuffOffset - 2) //2 byte of length field
-        {
-//          curPacketSize = lenOfPacket;s
-          TCP_Packet_Handle();
+step_2:
+    endOfPack = -1;
+    for(i = pos_start; i < TcpBuffLen; i++) {
+        if(TcpBuff[i] == '#') {
+            endOfPack = i;
+            TcpBuff[i] = '*';
+            break;       
         }
-      }
-      TcpBuffOffset = 0;
     }
-  }
+    if(endOfPack == -1) { //can't detect #
+        if(pos_start != 0) {
+            j = 0;
+            for(i = pos_start; i < TcpBuffLen; i++) {
+                TcpBuff[j++] = TcpBuff[i];
+            }
+            //update new TcpBuffLen
+            TcpBuffLen = j;
+        }
+        return;
+    }
+
+step_3_4:
+    HexStringToByteArray(pos_start, endOfPack);
+
+step_5:
+    TCP_Packet_Handle(TcpBuff, (endOfPack - pos_start) / 2);
+
+step_6:
+    pos_start = endOfPack + 1;
+    goto step_2;
 }
 
 uint16_t checkSum(uint8_t *ptr, int length)
@@ -554,6 +541,7 @@ void TCP_UDP_Stack_Init(osEventFlagsId_t eventID, int successFlag, int errorFlag
   ISError = false;
 
   TcpBuffOffset = 0;
+  TcpBuffLen = 0;
   bIsPending = false;
   remainData = 0;
 

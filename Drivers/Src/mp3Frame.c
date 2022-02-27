@@ -193,8 +193,35 @@ int getCurrentNumOfPacket()
 
 //this version ignore all packet mp3(include many frames) if this is not in time
 
+uint16_t caculateChecksum(uint8_t *data, int offset, int length)
+{
+    uint32_t checkSum = 0;
+    int index = offset;
+    while (length > 1)
+    {
+        checkSum += ((uint32_t)data[index] << 8) | ((uint32_t)data[index + 1]); // little edian
+        length -= 2;
+        index += 2;
+    }
+    if (length == 1) // still have 1 byte
+    {
+        checkSum += ((uint32_t)data[index] << 8);
+    }
+    while ((checkSum >> 16) > 0) // checkSum > 0xFFFF
+    {
+        checkSum = (checkSum & 0xFFFF) + (checkSum >> 16);
+    }
+    // inverse
+    checkSum = ~checkSum;
+    return (uint16_t)checkSum;
+}
+
+int miss_save_frame = 0, miss_time_frame = 0, cant_save_frame1 = 0, cant_save_frame2 = 0, cant_save_frame3 = 0;
+int64_t offsetPacket, offsetPacket_lowest = 1000, packet_timeout = 0;
 void mp3SaveFrame(MP3Struct *mp3Packet, int len)
 {
+    static int oldSession = -1, oldID = -1;
+
     MP3LOG("mp3SaveFrame\n");
 
     //check property packet, len of adu and mp3 frame
@@ -202,8 +229,31 @@ void mp3SaveFrame(MP3Struct *mp3Packet, int len)
     if (tmpPtr != (uint8_t *)mp3Packet + len || mp3Packet->sizeOfFirstFrame > ADU_FRAME_SIZE \
         || mp3Packet->frameSize + 4 != MP3_FRAME_SIZE || mp3Packet->numOfFrame != NUM_OF_FRAME_IN_TCP_PACKET) {
         MP3LOG("invalid tcp_mp3 packet\n");
+        cant_save_frame1++;
         return;
     }
+
+    if(oldSession == -1 || oldSession != mp3Packet->session) {
+        oldSession = mp3Packet->session;
+        oldID = mp3Packet->frameID;
+    } else {
+        if(oldID + 5 < mp3Packet->frameID) {
+            miss_save_frame += mp3Packet->frameID - oldID - 5;
+        }
+        oldID = mp3Packet->frameID;
+    }
+    {
+        int64_t t1 = TCP_UDP_GetNtpTime();
+        if(t1 != 0) {
+            offsetPacket = mp3Packet->timestamp - t1;
+            if(offsetPacket < offsetPacket_lowest)
+                offsetPacket_lowest = offsetPacket;
+            if(offsetPacket < 0)
+                miss_time_frame++;
+        }
+    }
+
+    // goto exit;
 
     //get volume, timeperframe
     newVol = mp3Packet->volume;
@@ -212,21 +262,28 @@ void mp3SaveFrame(MP3Struct *mp3Packet, int len)
 
     //check time, before save
     int64_t curTime = TCP_UDP_GetNtpTime();
-    if(curTime == 0) return; //don't have ntp time
+    if(curTime == 0) { //don't have ntp time
+        cant_save_frame2++;
+        return;
+    }
 
     int64_t offsetTime = mp3Packet->timestamp - curTime;
 
-    MP3LOG("mp3 packet offsetTime %ld\n", offsetTime);
+    // MP3LOG("mp3 packet offsetTime %ld\n", offsetTime);
 
     if (offsetTime <= 24) //packet come slow, need remove some frames
     {
-        MP3LOG("mp3 packet timeout\n");
-        return;
+        // MP3LOG("mp3 packet timeout\n");
+        packet_timeout++;
+        // return;
     }
 
     osStatus_t status = osMutexAcquire(buffTcpPacket_mtID, WAIT_TCP_PACKET_BUFF_MUTEX);
     if(status == osOK) { //acquire success
         if(buffTcpPacket[buffTcpPacket_wrindex].bool_isempty) {
+            buffTcpPacket[buffTcpPacket_wrindex].frameID = mp3Packet->frameID;
+            buffTcpPacket[buffTcpPacket_wrindex].session = mp3Packet->session;
+
             //get timestampe
             buffTcpPacket[buffTcpPacket_wrindex].timestamp = mp3Packet->timestamp;
             
@@ -236,19 +293,19 @@ void mp3SaveFrame(MP3Struct *mp3Packet, int len)
             uint8_t *mp3Ptr = buffTcpPacket[buffTcpPacket_wrindex].mp3Frame;
             uint8_t *framePtr = mp3Packet->data;
             //change bitrate to 144kbps
-            framePtr[2] &= 0x0F;
-            framePtr[2] |= 0xD0; //0b1101 0000
-            //clear backpoint of playbuff
-            framePtr[4] = 0;
+            // framePtr[2] &= 0x0F;
+            // framePtr[2] |= 0xD0; //0b1101 0000
+            // //clear backpoint of playbuff
+            // framePtr[4] = 0;
 
             memcpy(mp3Ptr, framePtr, mp3Packet->sizeOfFirstFrame);
             framePtr += mp3Packet->sizeOfFirstFrame;
 
             // fill 0x00 byte
             int j;
-            for(j = mp3Packet->sizeOfFirstFrame; j < ADU_FRAME_SIZE; j++) {
-                *(mp3Ptr + j) = 0;
-            }
+            // for(j = mp3Packet->sizeOfFirstFrame; j < ADU_FRAME_SIZE; j++) {
+            //     *(mp3Ptr + j) = 0;
+            // }
             mp3Ptr += ADU_FRAME_SIZE;
 
             //copy another mp3 packet
@@ -260,9 +317,17 @@ void mp3SaveFrame(MP3Struct *mp3Packet, int len)
                 mp3Ptr += MP3_FRAME_SIZE;
             }
             buffTcpPacket[buffTcpPacket_wrindex].bool_isempty = 0;
+
+            //debug
+            // uint16_t chsum = caculateChecksum(buffTcpPacket[buffTcpPacket_wrindex].mp3Frame, 0, MP3_BLOCK_SIZE);
+            // printf("**cksum2 %d 0x%04X\n", buffTcpPacket[buffTcpPacket_wrindex].frameID, chsum);
+
             buffTcpPacket_wrindex++;
             if(buffTcpPacket_wrindex >= TCP_PACKET_BUFF_SIZE_MAX)
                 buffTcpPacket_wrindex = 0;
+        } else
+        {
+            cant_save_frame3++;
         }
         osMutexRelease(buffTcpPacket_mtID);
     }
@@ -275,10 +340,15 @@ int mp3GetVol()
 }
 
 //mp3 get frame, if frame is out_of_time remove(empty=1), if 
-int mp3GetFrame(uint8_t buf, int buf_size) {
+int miss_get_frame = 0;
+int mp3GetFrame(uint8_t *buf, int buf_size) {
+    static int oldSession = -1, oldID = -1;
+    
     if(buf_size != (MP3_BLOCK_SIZE))
         return -1;
     
+    // uint8_t buf2[720];
+
     int64_t curTime = 0, offset = 0;
     int error = 0;
     //check timestamp of current 
@@ -313,11 +383,26 @@ int mp3GetFrame(uint8_t buf, int buf_size) {
                 buffTcpPacket_rdindex = 0;
             continue;
         } else {
-            //this frame is siutable
+            //this frames is siutable
             memcpy(buf, buffTcpPacket[buffTcpPacket_rdindex].mp3Frame, buf_size);
+            // memcpy(buf2, buffTcpPacket[buffTcpPacket_rdindex].mp3Frame, buf_size);
             //this frame is used need to remove
             buffTcpPacket[buffTcpPacket_rdindex].bool_isempty = 1;
             buffTcpPacket[buffTcpPacket_rdindex].timestamp = 0;
+
+            //debug
+            // uint16_t chsum = caculateChecksum(buf, 0, MP3_BLOCK_SIZE);
+            // printf("*cksum %d 0x%04X\n", buffTcpPacket[buffTcpPacket_rdindex].frameID, chsum);
+            if(oldSession == -1 || oldSession != buffTcpPacket[buffTcpPacket_rdindex].session) {
+                oldSession = buffTcpPacket[buffTcpPacket_rdindex].session;
+                oldID = buffTcpPacket[buffTcpPacket_rdindex].frameID;
+            } else {
+                if(oldID + 5 < buffTcpPacket[buffTcpPacket_rdindex].frameID) {
+                    miss_get_frame += buffTcpPacket[buffTcpPacket_rdindex].frameID - oldID - 5;
+                }
+                oldID = buffTcpPacket[buffTcpPacket_rdindex].frameID;
+            }
+
             buffTcpPacket_rdindex++;
             if(buffTcpPacket_rdindex >= TCP_PACKET_BUFF_SIZE_MAX)
                 buffTcpPacket_rdindex = 0;
