@@ -242,10 +242,11 @@ void sim7600_init(bool isMini)
     ;
 
   //power off to debug (don't need to plug out sim7600)
-//  sim7600_powerOFF();
 
   //power on sim7600
-  sim7600_powerON();
+//  sim7600_powerON();
+  Sim_PWR(0);
+  osDelay(30000);
 }
 
 void sim7600_update_response(const char *_res1, const char *_res2)
@@ -898,6 +899,10 @@ void sim7600_usart_rx_check()
   
   /* Calculate current position in buffer */
   new_pos_dma = sim_dma_buff_size - (int)(LL_DMA_GetDataLength(DMA2, LL_DMA_STREAM_2) & 0xFFFF);
+  int64_t curTime = (int64_t)(TIM2->CNT) / 2;
+  volatile int ndtr1 = (int)(LL_DMA_GetDataLength(DMA2, LL_DMA_STREAM_2) & 0xFFFF);
+  volatile int ndtr2 = DMA2_Stream2->NDTR;
+  printf("usart_rx_start %ld %d %d\n", curTime, ndtr1, ndtr2);  
   if(new_pos_dma < 0)
   {
     LOG_WRITE("new_pos_dma < 0\n");
@@ -934,13 +939,16 @@ void sim7600_usart_rx_check()
     }
 
     //debug /////////////////////////////////////
-    uint8_t tmp = sim_buff[10]; sim_buff[10] = 0;
+    uint8_t tmp = sim_buff[30]; sim_buff[30] = 0;
     LOG_WRITE("simbuff %s\n", sim_buff);
-    sim_buff[10] = tmp;
+    if(strstr(sim_buff, "ECEIVE") == sim_buff) {
+      printf("sth wrong\n");
+    }
+    sim_buff[30] = tmp;
     //////////////////////////////////////////////
-
-    int returnTmp = sim7600_handle_received_data();
     SIM7600_RESUME_RX();
+    int returnTmp = sim7600_handle_received_data();
+    // SIM7600_RESUME_RX();
     LOG_WRITE("returnTmp %d\n", returnTmp);
     if (returnTmp < 0) //something wrong
     {
@@ -1215,6 +1223,12 @@ int sim7600_handle_received_data()
       resultTmp = check_normal_ip_packet(posOfSubStrSave, listResponse[resultCheck], &sim_buff_index, &tcpData, &tcpDataLen);
       if (resultTmp == 0)
       {
+        //<--debug
+        char tmpBuff[9];
+        memcpy(tmpBuff, tcpData, 8); tmpBuff[9] = 0;
+        LOG_WRITE("tcp packet addr:0x%08x len:%d data:%s\n", tcpData, tcpDataLen, tmpBuff);
+        //-->debug
+
         TCP_Packet_Analyze(tcpData, tcpDataLen);
         continue;
       }

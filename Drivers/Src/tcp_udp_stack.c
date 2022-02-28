@@ -15,6 +15,7 @@ bool IsTLSHanshaked = false;
 bool ISError = false;
 
 uint8_t TcpBuff[TCP_BUFF_LEN];
+uint8_t HexBuff[1000];
 int TcpBuffOffset = 0, TcpBuffLen = 0;
 bool bIsPending = false;
 int remainData = 0; //reamin data need to collect
@@ -99,11 +100,12 @@ bool AudioPacketHandle(uint8_t *data, int len)
 int realPacketLen; //len payload , not including md5
 int totalTCPBytes = 0;
 int packet_md5_error1 = 0, packet_md5_error2 = 0, packet_md5_error3 = 0, packet_len_error = 0;
+int idPackOld = -1, idPackMiss = 0;
 void TCP_Packet_Handle(uint8_t *data, int data_len)
 {
   LOG_WRITE("tcpPacketHdl\n");
   ISError = true;
-  PacketTCPStruct *packetTcpHeader = (PacketTCPStruct *)data;
+  PacketTCPStruct *packetTcpHeader = (PacketTCPStruct *)(data + 4);
   // totalTCPBytes += packetTcpHeader->len;
   realPacketLen = packetTcpHeader->len - SIZE_OF_MD5;
   if (!IsTLSHanshaked)
@@ -169,8 +171,25 @@ void TCP_Packet_Handle(uint8_t *data, int data_len)
   else //handle TLS packet
   {
     ISError = false;
+    // packetTcpHeader = (PacketTCPStruct *)(data + 4); 
+    data_len -= 4;
 
-    //check length
+    //check id
+    static int bool_first_print_len = 1;
+    int *idPack = (int*)data;
+    if(bool_first_print_len) {
+      bool_first_print_len = 0;
+      printf("packet len (1st) %d\n", data_len);
+    }
+    
+    if(*idPack != idPackOld + 1) {
+      idPackMiss += *idPack - idPackOld - 1;
+      printf("packet len (err) %d\n", data_len);
+    }
+    idPackOld = *idPack;
+    // return;
+
+    
     if(packetTcpHeader->len + 2 != data_len) {
       packet_len_error++;
       return;
@@ -262,7 +281,7 @@ int HexStringToByteArray(int start, int stop)
     for(i = start; i < stop; i+=2)
     {
         tmpByte = (hexStringMap[TcpBuff[i]] << 4) | hexStringMap[TcpBuff[i+1]];
-        TcpBuff[j++] = tmpByte;
+        HexBuff[j++] = tmpByte;
     }
     return j;
 }
@@ -363,11 +382,11 @@ int HexStringToByteArrayUDP(uint8_t *data, int len)
 //     }
 //   }
 // }
-
+int tcpPacketErrorHead = 0;
 void TCP_Packet_Analyze(uint8_t *recvData, int length)
 {
     int pos_start = 0, i, endOfPack, j;
-
+    printf("TCP_Packet_Analyze BuffLen:%d, dataLen:%d\n", TcpBuffLen, length);
     //step 1
     memcpy(TcpBuff + TcpBuffLen, recvData, length);
     TcpBuffLen += length;
@@ -377,7 +396,6 @@ step_2:
     for(i = pos_start; i < TcpBuffLen; i++) {
         if(TcpBuff[i] == '#') {
             endOfPack = i;
-            TcpBuff[i] = '*';
             break;       
         }
     }
@@ -394,13 +412,19 @@ step_2:
     }
 
 step_3_4:
-    HexStringToByteArray(pos_start, endOfPack);
+    if(TcpBuff[pos_start] != '*') {
+      tcpPacketErrorHead++;
+    }
+    HexStringToByteArray(pos_start + 1, endOfPack);
 
 step_5:
-    TCP_Packet_Handle(TcpBuff, (endOfPack - pos_start) / 2);
+    TCP_Packet_Handle(HexBuff, (endOfPack - pos_start - 1) / 2);
 
 step_6:
     pos_start = endOfPack + 1;
+    printf("pos_start %d, TcpBuffLen:%d\n", pos_start, TcpBuffLen);
+    if(pos_start >= TcpBuffLen) //reach the end of TcpBuff
+      return;
     goto step_2;
 }
 

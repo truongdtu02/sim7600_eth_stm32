@@ -25,7 +25,7 @@ PacketStruct buffTcpPacket[TCP_PACKET_BUFF_SIZE_MAX] = {
     {.bool_isempty = 1, .timestamp = 0}
 };
 
-#define MP3LOG printf
+#define MP3LOG //printf
 
 // int64_t curTimeDebug, offsetTimeDebug, curTimeDebugFirst = 0, curTimeDebugSecond = 0;
 
