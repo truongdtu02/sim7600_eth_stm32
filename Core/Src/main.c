@@ -96,21 +96,21 @@ const osEventFlagsAttr_t InitEvent_attributes = {
 osThreadId_t configSimTaskHandle;
 const osThreadAttr_t configSimTask_attributes = {
   .name = "configSimTask",
-  .stack_size = 128 * 4,
+  .stack_size = 128 * 8,
   .priority = (osPriority_t) osPriorityHigh3,
 };
 
 osThreadId_t connectSimTaskHandle;
 const osThreadAttr_t connectSimTask_attributes = {
   .name = "connectSimTask",
-  .stack_size = 128 * 4,
+  .stack_size = 128 * 8,
   .priority = (osPriority_t) osPriorityHigh2,
 };
 
 osThreadId_t sendSimTaskHandle;
 const osThreadAttr_t sendSimTask_attributes = {
   .name = "sendSimTask",
-  .stack_size = 128 * 4,
+  .stack_size = 128 * 8,
   .priority = (osPriority_t) osPriorityHigh1,
 };
 

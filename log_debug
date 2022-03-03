@@ -2380,3 +2380,2236 @@ Verifying ...
 Download verified successfully 
 
 
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a17724.srec
+  File          : ST-LINK_GDB_server_a17724.srec
+  Size          : 170600 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.211
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Error: Failed to set more breakpoints
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a14872.srec
+  File          : ST-LINK_GDB_server_a14872.srec
+  Size          : 170600 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.145
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a23276.srec
+  File          : ST-LINK_GDB_server_a23276.srec
+  Size          : 170600 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.119
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a23708.srec
+  File          : ST-LINK_GDB_server_a23708.srec
+  Size          : 170636 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.221
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a18360.srec
+  File          : ST-LINK_GDB_server_a18360.srec
+  Size          : 170680 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.210
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a19080.srec
+  File          : ST-LINK_GDB_server_a19080.srec
+  Size          : 170680 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.126
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a17156.srec
+  File          : ST-LINK_GDB_server_a17156.srec
+  Size          : 170680 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.189
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a05924.srec
+  File          : ST-LINK_GDB_server_a05924.srec
+  Size          : 170680 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.130
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a14548.srec
+  File          : ST-LINK_GDB_server_a14548.srec
+  Size          : 170700 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.137
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a13376.srec
+  File          : ST-LINK_GDB_server_a13376.srec
+  Size          : 170728 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.113
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a16940.srec
+  File          : ST-LINK_GDB_server_a16940.srec
+  Size          : 170752 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.117
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a17692.srec
+  File          : ST-LINK_GDB_server_a17692.srec
+  Size          : 170720 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.126
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a10048.srec
+  File          : ST-LINK_GDB_server_a10048.srec
+  Size          : 170720 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.124
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Failed to bind to port 61235, error code -1: No error
+Failure starting SWV server on TCP port: 61235
+Failed to bind to port 61234, error code -1: No error
+Failure starting GDB server: TCP port 61234 not available.
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Failed to bind to port 61235, error code -1: No error
+Failure starting SWV server on TCP port: 61235
+Failed to bind to port 61234, error code -1: No error
+Failure starting GDB server: TCP port 61234 not available.
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a20116.srec
+  File          : ST-LINK_GDB_server_a20116.srec
+  Size          : 170720 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.120
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a14704.srec
+  File          : ST-LINK_GDB_server_a14704.srec
+  Size          : 167424 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.106
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.32V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a00788.srec
+  File          : ST-LINK_GDB_server_a00788.srec
+  Size          : 167424 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.101
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Target is not responding, retrying...
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.32V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a12012.srec
+  File          : ST-LINK_GDB_server_a12012.srec
+  Size          : 167424 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.180
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.32V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev Y
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a06572.srec
+  File          : ST-LINK_GDB_server_a06572.srec
+  Size          : 170672 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.198
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.32V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev 2.0
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a01652.srec
+  File          : ST-LINK_GDB_server_a01652.srec
+  Size          : 170672 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.478
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.32V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev 2.0
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a14332.srec
+  File          : ST-LINK_GDB_server_a14332.srec
+  Size          : 170608 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.513
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.32V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev 2.0
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a15184.srec
+  File          : ST-LINK_GDB_server_a15184.srec
+  Size          : 170640 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.577
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Error: Failed to set more breakpoints
+Error: Failed to set more breakpoints
+Error: Failed to set more breakpoints
+Shutting down...
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.32V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev 2.0
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a05464.srec
+  File          : ST-LINK_GDB_server_a05464.srec
+  Size          : 170640 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.383
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Error: Failed to set more breakpoints
+Shutting down...
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.32V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev 2.0
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a10924.srec
+  File          : ST-LINK_GDB_server_a10924.srec
+  Size          : 170640 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.321
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.32V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev 2.0
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a12928.srec
+  File          : ST-LINK_GDB_server_a12928.srec
+  Size          : 170640 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.324
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+STM32_AppReset(), failure reset target.
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.32V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev 2.0
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a07684.srec
+  File          : ST-LINK_GDB_server_a07684.srec
+  Size          : 170640 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.355
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.32V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev 2.0
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a11960.srec
+  File          : ST-LINK_GDB_server_a11960.srec
+  Size          : 170656 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.377
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+STM32_AppReset(), failure reset target.
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.32V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev 2.0
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a04592.srec
+  File          : ST-LINK_GDB_server_a04592.srec
+  Size          : 170656 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.340
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev 2.0
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a02000.srec
+  File          : ST-LINK_GDB_server_a02000.srec
+  Size          : 170656 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.457
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev 2.0
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a01372.srec
+  File          : ST-LINK_GDB_server_a01372.srec
+  Size          : 170656 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.340
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev 2.0
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a11800.srec
+  File          : ST-LINK_GDB_server_a11800.srec
+  Size          : 170656 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.334
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+Exit.
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+STM32_AppReset(), failure reset target.
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev 2.0
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a12188.srec
+  File          : ST-LINK_GDB_server_a12188.srec
+  Size          : 170672 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.344
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev 2.0
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a01248.srec
+  File          : ST-LINK_GDB_server_a01248.srec
+  Size          : 170608 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.345
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+
+
+STMicroelectronics ST-LINK GDB server. Version 6.0.0
+Copyright (c) 2021, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.9.0-RC01                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 1526060032124653354B4E00
+ST-LINK FW  : V2J37S7
+Board       : --
+Voltage     : 3.31V
+SWD freq    : 4000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x413
+Revision ID : Rev 2.0
+Device name : STM32F405xx/F407xx/F415xx/F417xx
+Flash size  : 1 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M4
+BL Version  : --
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a08376.srec
+  File          : ST-LINK_GDB_server_a08376.srec
+  Size          : 170608 Bytes
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 5]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:00:04.379
+
+
+
+Verifying ...
+
+
+
+
+Download verified successfully 
+
+
+Shutting down...
+Exit.

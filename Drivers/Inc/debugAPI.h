@@ -5,12 +5,13 @@
 
 typedef struct
 {
-	unsigned int order;
+	long int order;
     int old_pos;
     int new_pos;
     int return_Tmp;
+    int ndtr;
 } DMA_POS_Struct;
 
-void savePosDma(int oldPos, int newPos, int returnTmp);
+void savePosDma(int oldPos, int newPos, int returnTmp, int ndtr);
 
 #endif //DEBUG_API_H_

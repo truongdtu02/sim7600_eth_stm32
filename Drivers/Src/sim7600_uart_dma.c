@@ -49,12 +49,20 @@ bool bSim7600IsRunning = false;
 void sim7600_powerON()
 {
   LOG_WRITE("powerOn\n");  
+  //<--- my own sim
+  // Sim_PWR(0);
+  // osDelay(500);
+  // Sim_PWR(1);
+  // osDelay(500);
+  // Sim_PWR(0);
+  // osDelay(1000); //margin
+
+  //---> my own sim
+
+  // <---- new sim (PEN)
   Sim_PWR(0);
-  osDelay(500);
-  Sim_PWR(1);
-  osDelay(500);
-  Sim_PWR(0);
-  osDelay(1000); //margin
+  Sim_RST(0);
+  // ----> new sim (PEN)
 
   //wait until sim_status == 1;, time-out 60s
   int try = 6000;
@@ -79,12 +87,19 @@ void sim7600_powerOFF()
   bSim7600IsRunning = false;
 
   LOG_WRITE("powerOff\n");  
-  Sim_PWR(0);
-  osDelay(500);
+  //<--- my own sim
+  // Sim_PWR(0);
+  // osDelay(500);
+  // Sim_PWR(1);
+  // osDelay(4000);
+  // Sim_PWR(0);
+  // osDelay(1000); //margin
+  //---> my own sim
+
+  // <---- new sim (PEN)
   Sim_PWR(1);
-  osDelay(4000);
-  Sim_PWR(0);
-  osDelay(1000); //margin
+  Sim_RST(1);
+  // ----> new sim (PEN)
 
   //wait until sim_status == 0;, time-out 60s
   int try = 6000;
@@ -244,9 +259,7 @@ void sim7600_init(bool isMini)
   //power off to debug (don't need to plug out sim7600)
 
   //power on sim7600
-//  sim7600_powerON();
-  Sim_PWR(0);
-  osDelay(30000);
+ sim7600_powerON();
 }
 
 void sim7600_update_response(const char *_res1, const char *_res2)
@@ -534,7 +547,7 @@ bool sim7600_fullConfig()
   // set timeout value for AT+NETOPEN/AT+CIPOPEN/AT+CIPSEND
   //AT+CIPTIMEOUT=10000,10000,5000 ~ 10s, 10s, 5s
   if (!sim7600_AT("AT+CIPTIMEOUT=10000,10000,5000\r\n", "OK", NULL, 500, 2)) {
-	  printf("f1\n");
+	  //printf("f1\n");
 	  //return false;
   }
 
@@ -545,7 +558,7 @@ bool sim7600_fullConfig()
   //< AsyncMode > = 0
   //minimum retransmission timeout value for TCP connection in ms : 500
   if (!sim7600_AT("AT+CIPCCFG=10,0,0,1,1,0,500\r\n", "OK", NULL, 500, 2)){
-	  printf("f2\n");
+	  //printf("f2\n");
 	  //return false;
   }
 
@@ -744,7 +757,7 @@ void sim7600_connectTask()
       osEventFlagsClear(ConnectSimEventID, 1 << openNetEnum);
 
       //open network
-      if (!sim7600_AT_notify_error("AT+NETOPEN\r\n", "OK", NULL, 10000, 2)) continue; //+NETOPEN: 0
+      if (!sim7600_AT_notify_error("AT+NETOPEN\r\n", "OK", "Network is already opened", 10000, 2)) continue; //+NETOPEN: 0
     }
     else if (connectSimFlag & (1 << ipCloseEnum))
     {
@@ -892,6 +905,7 @@ void sim7600_recvTask()
 //global var
 int old_pos_dma = 0;
 int new_pos_dma = 0;
+volatile uint32_t ndtrDMA2;
 
 void sim7600_usart_rx_check()
 {
@@ -899,10 +913,9 @@ void sim7600_usart_rx_check()
   
   /* Calculate current position in buffer */
   new_pos_dma = sim_dma_buff_size - (int)(LL_DMA_GetDataLength(DMA2, LL_DMA_STREAM_2) & 0xFFFF);
-  int64_t curTime = (int64_t)(TIM2->CNT) / 2;
-  volatile int ndtr1 = (int)(LL_DMA_GetDataLength(DMA2, LL_DMA_STREAM_2) & 0xFFFF);
-  volatile int ndtr2 = DMA2_Stream2->NDTR;
-  printf("usart_rx_start %ld %d %d\n", curTime, ndtr1, ndtr2);  
+  ndtrDMA2 = DMA2_Stream2->NDTR;
+  
+  //printf("usart_rx_start %ld %d\n", curTime, (int)ndtrDMA2);  
   if(new_pos_dma < 0)
   {
     LOG_WRITE("new_pos_dma < 0\n");
@@ -959,7 +972,7 @@ void sim7600_usart_rx_check()
     }
 
     //debug //////////////////////////////////////
-    savePosDma(old_pos_dma, new_pos_dma, returnTmp);
+    savePosDma(old_pos_dma, new_pos_dma, returnTmp, ndtrDMA2);
     //////////////////////////////////////////////
 
     old_pos_dma += returnTmp;
@@ -1185,7 +1198,6 @@ int sim7600_handle_received_data()
         resultTmp = -1;
       }
     }                          
-
     else if (resultCheck == 0) //udp received
     {
       uint8_t *udpData;
@@ -1225,7 +1237,7 @@ int sim7600_handle_received_data()
       {
         //<--debug
         char tmpBuff[9];
-        memcpy(tmpBuff, tcpData, 8); tmpBuff[9] = 0;
+        memcpy(tmpBuff, tcpData, 8); tmpBuff[8] = 0;
         LOG_WRITE("tcp packet addr:0x%08x len:%d data:%s\n", tcpData, tcpDataLen, tmpBuff);
         //-->debug
 

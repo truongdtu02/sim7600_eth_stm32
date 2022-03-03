@@ -146,6 +146,8 @@ void TCP_Packet_Handle(uint8_t *data, int data_len)
           TCP_UDP_Send(1, RSA_Packet, RSA_PACKET_LEN);
           ISError = false;
         }
+      } else {
+    	  printf("md5sum mark error\n");
       }
     }
     else if (TCPConnectStatus == 1 && realPacketLen >= AES128_BLOCK_LEN && (realPacketLen % AES128_BLOCK_LEN) == 0)
@@ -382,10 +384,11 @@ int HexStringToByteArrayUDP(uint8_t *data, int len)
 //     }
 //   }
 // }
-int tcpPacketErrorHead = 0;
+int tcpPacketErrorHead = 0, start_TcpBuffLen;
 void TCP_Packet_Analyze(uint8_t *recvData, int length)
 {
     int pos_start = 0, i, endOfPack, j;
+    start_TcpBuffLen = TcpBuffLen;
     printf("TCP_Packet_Analyze BuffLen:%d, dataLen:%d\n", TcpBuffLen, length);
     //step 1
     memcpy(TcpBuff + TcpBuffLen, recvData, length);
@@ -416,15 +419,17 @@ step_3_4:
       tcpPacketErrorHead++;
     }
     HexStringToByteArray(pos_start + 1, endOfPack);
-
+    printf("endOfPack:%d pos_start:%d\n", endOfPack, pos_start);
 step_5:
     TCP_Packet_Handle(HexBuff, (endOfPack - pos_start - 1) / 2);
 
 step_6:
     pos_start = endOfPack + 1;
     printf("pos_start %d, TcpBuffLen:%d\n", pos_start, TcpBuffLen);
-    if(pos_start >= TcpBuffLen) //reach the end of TcpBuff
+    if(pos_start >= TcpBuffLen) { //reach the end of TcpBuff
+      TcpBuffLen = 0;
       return;
+    }
     goto step_2;
 }
 
