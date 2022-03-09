@@ -31,11 +31,13 @@
 #include "md5.h"
 #include "ethLAN.h"
 #include "vs1063a.h"
+#include "w25qxx.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+uint8_t bufferwq1[8] = {0,2,3,4,5,6,0,255};
+uint8_t bufferwq2[8] = {0};
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -48,6 +50,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
 
 TIM_HandleTypeDef htim2;
@@ -250,6 +253,7 @@ static void MX_USART1_UART_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM8_Init(void);
 static void MX_SPI2_Init(void);
+static void MX_SPI1_Init(void);
 void StartDefaultTask(void *argument);
 void CallbackTimerPeriodic(void *argument);
 void CallbackTimerOnce(void *argument);
@@ -332,8 +336,51 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM8_Init();
   MX_SPI2_Init();
-
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
+  W25qxx_Init();
+  W25qxx_EraseSector(0);
+  W25qxx_EraseSector(1);
+  W25qxx_EraseSector(2);
+  W25qxx_EraseSector(3);
+  log_init();
+   int jj;
+   for(jj = 0; jj < 1000; jj++) {
+     log_to_flash("hello everyone, my name is bom, how are you\n");
+     if(jj > 0 && jj % 10 == 0) {
+       log_do_erase();
+//       W25qxx_WaitBusy(0);
+     }
+   }
+//  log_to_flash("hello everyone, my name is bom, how are you\n");
+//  log_to_flash("hello everyone, my name is bom, how are you\n");
+//  log_to_flash("hello everyone, my name is bom, how are you\n");
+//  log_to_flash("hello everyone, my name is bom, how are you\n");
+//  log_to_flash("hello everyone, my name is bom, how are you\n");
+  char buff_rd[4096];
+  int ii;
+  W25qxx_ReadSector(buff_rd, 0, 0, 0);
+  for(ii = 0; ii < 4096; ii++) {
+    printf("%c", buff_rd[ii]);
+  }
+  printf("\n");
+  W25qxx_ReadSector(buff_rd, 1, 0, 0);
+  for(ii = 0; ii < 4096; ii++) {
+    printf("%c", buff_rd[ii]);
+  }
+  printf("\n");
+  W25qxx_ReadSector(buff_rd, 2, 0, 0);
+  for(ii = 0; ii < 4096; ii++) {
+    printf("%c", buff_rd[ii]);
+  }
+  printf("\n");
+  W25qxx_ReadSector(buff_rd, 3, 0, 0);
+  for(ii = 0; ii < 4096; ii++) {
+    printf("%c", buff_rd[ii]);
+  }
+  printf("\n");
+  printf("\n");
+  
   HAL_TIM_Base_Start(&htim2);
   configureTimerForRunTimeStats();
 
@@ -463,6 +510,44 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief SPI1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI1_Init(void)
+{
+
+  /* USER CODE BEGIN SPI1_Init 0 */
+
+  /* USER CODE END SPI1_Init 0 */
+
+  /* USER CODE BEGIN SPI1_Init 1 */
+
+  /* USER CODE END SPI1_Init 1 */
+  /* SPI1 parameter configuration*/
+  hspi1.Instance = SPI1;
+  hspi1.Init.Mode = SPI_MODE_MASTER;
+  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi1.Init.NSS = SPI_NSS_SOFT;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi1.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI1_Init 2 */
+
+  /* USER CODE END SPI1_Init 2 */
+
 }
 
 /**
@@ -700,6 +785,10 @@ static void MX_GPIO_Init(void)
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOD);
+
+  /**/
+  LL_GPIO_ResetOutputPin(GPIOE, LL_GPIO_PIN_5);
 
   /**/
   LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_6);
@@ -708,8 +797,19 @@ static void MX_GPIO_Init(void)
   LL_GPIO_SetOutputPin(GPIOE, LL_GPIO_PIN_7|LL_GPIO_PIN_11|LL_GPIO_PIN_13);
 
   /**/
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_2|LL_GPIO_PIN_9;
+  LL_GPIO_SetOutputPin(FLASH_CS_GPIO_Port, FLASH_CS_Pin);
+
+  /**/
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_2|LL_GPIO_PIN_8|LL_GPIO_PIN_9;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  LL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+  /**/
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_5;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
@@ -728,6 +828,32 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+  /**/
+  GPIO_InitStruct.Pin = FLASH_CS_Pin;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
+  LL_GPIO_Init(FLASH_CS_GPIO_Port, &GPIO_InitStruct);
+
+  /**/
+  GPIO_InitStruct.Pin = FLASH_CS1_Pin;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  LL_GPIO_Init(FLASH_CS1_GPIO_Port, &GPIO_InitStruct);
+
+  /**/
+  GPIO_InitStruct.Pin = FLASH_CS2_Pin;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  LL_GPIO_Init(FLASH_CS2_GPIO_Port, &GPIO_InitStruct);
+
+  /**/
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_12;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN;
+  LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 }
 
@@ -932,4 +1058,3 @@ void assert_failed(uint8_t *file, uint32_t line)
 }
 #endif /* USE_FULL_ASSERT */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

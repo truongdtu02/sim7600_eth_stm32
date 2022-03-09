@@ -19,6 +19,7 @@
         "ethlan.h": "c",
         "tcp_udp_stack.h": "c",
         "tuple": "c",
-        "utility": "c"
+        "utility": "c",
+        "stdio.h": "c"
     }
 }

@@ -75,6 +75,12 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define FLASH_CS_Pin LL_GPIO_PIN_14
+#define FLASH_CS_GPIO_Port GPIOB
+#define FLASH_CS1_Pin LL_GPIO_PIN_15
+#define FLASH_CS1_GPIO_Port GPIOB
+#define FLASH_CS2_Pin LL_GPIO_PIN_8
+#define FLASH_CS2_GPIO_Port GPIOD
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
@@ -84,5 +90,3 @@ void Error_Handler(void);
 #endif
 
 #endif /* __MAIN_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
