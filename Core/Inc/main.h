@@ -43,7 +43,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "print.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -58,7 +58,7 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-#define DEBUG_LOG 1
+#define DEBUG_LOG 0
 #if DEBUG_LOG
 #define LOG_WRITE printf
 #else

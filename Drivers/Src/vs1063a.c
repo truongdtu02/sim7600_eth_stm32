@@ -2,6 +2,7 @@
 
 #include "vs1063a.h"
 #include "mp3Frame.h"
+#include "print.h"
 extern SPI_HandleTypeDef hspi2;
 #define spiAudio hspi2
 #define vs1063Delay osDelay
@@ -9,7 +10,7 @@ bool errorVS1063A = true; //for first time init
 int volMul = 100;		  //config in flash by ep8266
 int mainVol = 98;
 
-#define VSLOG_WRITE
+#define VSLOG_WRITE LOG_WRITE
 
 extern PacketStruct buffTcpPacket[];
 
@@ -61,7 +62,7 @@ static uint8_t VS1063_SPI_ReadByte(void)
 	HAL_StatusTypeDef res = HAL_SPI_Receive(&spiAudio, &rxData, 1, SPI_TIMEOUT_BYTE);
 	if (res != HAL_OK)
 	{
-		VSLOG_WRITE("HAL_SPI_Receive Error\n");
+		VSLOG_WRITE("SPIRe Err\n");
 		errorVS1063A = true;
 	}
 
@@ -73,7 +74,7 @@ static void VS1063_SPI_WriteByte(uint8_t TxData)
 	HAL_StatusTypeDef res = HAL_SPI_Transmit(&spiAudio, &TxData, 1, SPI_TIMEOUT_BYTE);
 	if (res != HAL_OK)
 	{
-		VSLOG_WRITE("HAL_SPI_Transmit Error\n");
+		VSLOG_WRITE("SPITr Err\n");
 		errorVS1063A = true;
 	}
 }
@@ -84,7 +85,7 @@ static void VS1063_SPI_WriteArray(uint8_t *TxData, int len)
 	HAL_StatusTypeDef res = HAL_SPI_Transmit(&spiAudio, TxData, len, SPI_TIMEOUT_ARRAY);
 	if (res != HAL_OK)
 	{
-		VSLOG_WRITE("HAL_SPI_Transmit Error\n");
+		VSLOG_WRITE("SPI_Tr Err\n");
 		errorVS1063A = true;
 	}
 }
@@ -92,12 +93,12 @@ static void VS1063_SPI_WriteArray(uint8_t *TxData, int len)
 //return 1 ~ success, 0 ~ , wait until MP3_DREQ == 1
 int waitMp3DREQ()
 {
-	VSLOG_WRITE("waitMp3DREQ ");
+	// VSLOG_WRITE("waitMp3DREQ ");
 	int try = MP3_DREQ_WAIT_CLKS;
 	while (try-- && MP3_DREQ == 0)
 		;
 
-	VSLOG_WRITE("%d clks\n", MP3_DREQ_WAIT_CLKS - try);
+//	VSLOG_WRITE("%d clks\n", MP3_DREQ_WAIT_CLKS - try);
 
 	if (try <= 0)
 	{
@@ -110,7 +111,7 @@ int waitMp3DREQ()
 
 void VS1063_WriteReg(uint8_t reg, uint16_t value)
 {
-	VSLOG_WRITE("VS1063_WriteReg\n");
+	// VSLOG_WRITE("VS1063_WriteReg\n");
 	waitMp3DREQ();
 
 	SCI_ENABLE
@@ -126,7 +127,7 @@ void VS1063_WriteReg(uint8_t reg, uint16_t value)
 uint16_t VS1063_ReadReg(uint8_t reg)
 {
 	uint16_t value;
-	VSLOG_WRITE("VS1063_ReadReg\n");
+	// VSLOG_WRITE("VS1063_ReadReg\n");
 
 	waitMp3DREQ();
 
@@ -228,7 +229,7 @@ uint16_t VS1063_GetDecodeTime(void)
 
 void VS1063_SoftReset(void)
 {
-	VSLOG_WRITE("VS1063_SoftReset\n");
+	VSLOG_WRITE("VS1063SoRe\n");
 
 	//change spi baud
 	spiAudio.Init.BaudRatePrescaler = SPI_AUDIO_PRESCLE_RESET;
@@ -238,7 +239,7 @@ void VS1063_SoftReset(void)
 	}
 
 	VS1063_WriteReg(SPI_MODE, (SM_SDINEW | SM_RESET)); /* */
-	osDelay(2);										   /* 1.35ms */
+	osDelay(100);										   /* 1.35ms */
 
 	int retry = 5;
 	while (VS1063_ReadReg(SPI_CLOCKF) != CONFIG_SPI_CLOCKF)
@@ -247,7 +248,7 @@ void VS1063_SoftReset(void)
 		osDelay(1);
 		if (retry-- < 0)
 		{
-			printf("SPI_CLOCKF Set Error\r\n");
+			VSLOG_WRITE("SPI_CLOCKFErr\r\n");
 			errorVS1063A = true;
 			return;
 		}
@@ -256,11 +257,11 @@ void VS1063_SoftReset(void)
 	VS1063_SetVol(mainVol);
 
 	//change spi baud
-	spiAudio.Init.BaudRatePrescaler = SPI_AUDIO_PRESCLE_MAIN;
-	if (HAL_SPI_Init(&spiAudio) != HAL_OK)
-	{
-		Error_Handler();
-	}
+//	spiAudio.Init.BaudRatePrescaler = SPI_AUDIO_PRESCLE_MAIN;
+//	if (HAL_SPI_Init(&spiAudio) != HAL_OK)
+//	{
+//		Error_Handler();
+//	}
 }
 
 //input vol 0-100 ~ %, convert 0-100 ~ 0xFE-0x00
@@ -280,8 +281,12 @@ void VS1063_SetVol(int vol)
 		vol = (100 - vol) * 0xFE / 100;
 	}
 	vol = vol | (vol << 8); //convert to 2 channels
-	VSLOG_WRITE("vs1063 set vol %X", vol);
+	// VSLOG_WRITE("vs1063 set vol %X", vol);
 	VS1063_WriteReg(SPI_VOL, vol);
+}
+
+void VS1063_PlayBeep() {
+	VS1063_PlayMP3(szBeepMP3, sizeof(szBeepMP3));
 }
 
 // void VS1063_Record_Init(void)
@@ -429,8 +434,8 @@ void VS1063_Init(void)
 	vs1063Delay(100);
 
 	//config
-	 VS1063_WriteReg(SPI_MODE, SM_SDINEW | SM_RESET); /* */
-//	osDelay(2);										 /* 1.35ms */
+	VS1063_WriteReg(SPI_MODE, SM_SDINEW | SM_RESET); /* */
+	osDelay(100);										 /* 1.35ms */
 
 	waitMp3DREQ();
 
@@ -448,16 +453,20 @@ void VS1063_Init(void)
 	}
 
 	// change spi baud
-	spiAudio.Init.BaudRatePrescaler = SPI_AUDIO_PRESCLE_MAIN;
-	if (HAL_SPI_Init(&spiAudio) != HAL_OK)
-	{
-		Error_Handler();
-		errorVS1063A = true;
-		return;
-	}
+//	spiAudio.Init.BaudRatePrescaler = SPI_AUDIO_PRESCLE_MAIN;
+//	if (HAL_SPI_Init(&spiAudio) != HAL_OK)
+//	{
+//		Error_Handler();
+//		errorVS1063A = true;
+//		return;
+//	}
 
 	VS1063_SetVol(mainVol);
 	errorVS1063A = false;
+
+	VS1063_SoftReset();
+
+	osDelay(2000);
 }
 
 // void VS1063_PlayBeep(void)
@@ -484,17 +493,19 @@ void VS1063_PlayMP3(uint8_t *data, int len)
 }
 
 bool bRunningVS1063 = false;
+int runningVS1063_timeout_cnt = 0;
 int64_t startPlayTimeVS1063;
 uint32_t curFrameIdVs1063 = 0;
 int missFrame = 0;
 
 //get frame has property timestamp, check space remain in FIFO vs1063a
 int playTime = 0;
+int32_t sdiFree;
 void VS1063_PlayMp3Frame()
 {
 	static uint8_t bufmp3[MP3_BLOCK_SIZE];
 	//read sdiFree FIFO
-	int32_t sdiFree; 
+	 
 	sdiFree = VS1063A_ReadRAM(0xc0df); //<=2048/2
 	sdiFree = VS1063A_ReadRAM(0xc0df); //<=2048/2
 
@@ -502,11 +513,19 @@ void VS1063_PlayMp3Frame()
 		return;
 
 	if(mp3GetFrame(bufmp3, sizeof(bufmp3)) == 0) {
+		bRunningVS1063 = true;
+		runningVS1063_timeout_cnt = 0;
 		//push frame to FIFO
 		VS1063_PlayMP3(bufmp3, sizeof(bufmp3));
 		sdiFree = VS1063A_ReadRAM(0xc0df); //<=2048/2
 		sdiFree = VS1063A_ReadRAM(0xc0df); //<=2048/2
 		playTime += 5 * 24;
+	} else {
+		if(runningVS1063_timeout_cnt < 500)
+			runningVS1063_timeout_cnt++;
+		else if(runningVS1063_timeout_cnt >= 500) {
+			bRunningVS1063 = false;
+		}
 	}
 //	if(waitMp3DREQ() == 0)
 //		return;
@@ -647,43 +666,75 @@ void VS1063_PlayMp3Frame()
 // 	}
 // }
 
-int state = 0;  // 2:mic, 1:fm, 0:mp3
+int state = -1;  // 2:mic, 1:fm, 0:mp3, -1 off_ampli
+#define VS1063_INPUT_CNT_THRE 20 //use this to filter noise
 void VS1063_ConfigOutput()
 {
-	if(!MIC_SIGNAL && state != 2)
+	static int mic_signal_cnt = 0, fm_signal_cnt = 0;
+	static int bool_mic_en = 0, bool_fm_en = 0;
+
+	if(!MIC_SIGNAL) {
+		if(mic_signal_cnt < VS1063_INPUT_CNT_THRE)
+			mic_signal_cnt++;
+		if(mic_signal_cnt >= VS1063_INPUT_CNT_THRE) {
+			bool_mic_en = 1;
+		}
+	} else {
+		if(mic_signal_cnt > 0)
+			mic_signal_cnt--;
+		if(mic_signal_cnt <= 0) {
+			bool_mic_en = 0;
+		}
+	}
+
+	if(FM_SIGNAL) {
+		if(fm_signal_cnt < VS1063_INPUT_CNT_THRE)
+			fm_signal_cnt++;
+		if(fm_signal_cnt >= VS1063_INPUT_CNT_THRE) {
+			bool_fm_en = 1;
+		}
+	} else {
+		if(fm_signal_cnt > 0)
+			fm_signal_cnt--;
+		if(fm_signal_cnt <= 0) {
+			bool_fm_en = 0;
+		}
+	}
+
+	if(bool_mic_en)
 	{
-		if(state == 0)
-		{
+		if(state != 2) {
+			state = 2;
 			VS1063A_WriteRAM(PLAYMOD_ADDR, PLAYMOD_MIC_FM);
 			//turn off volume
 			VS1063_SetVol(0);
+			//set left channel
+			uint16_t tmp = VS1063_ReadReg(SPI_AICTRL3);
+			VS1063_WriteReg(SPI_AICTRL3, (tmp & AICTRL3_ADC_MASK) | AICTRL3_ADC_LEFT);
 		}
-		//set left channel
-		uint16_t tmp = VS1063_ReadReg(SPI_AICTRL3);
-		VS1063_WriteReg(SPI_AICTRL3, (tmp & AICTRL3_ADC_MASK) | AICTRL3_ADC_LEFT);
-
-		state = 2;
 	}
-// 	else if(FM_SIGNAL && state != 1)
-// 	{
-// 		if(state == 0)
-// 		{
-// 			VS1063A_WriteRAM(PLAYMOD_ADDR, PLAYMOD_MIC_FM);
-// 			//turn off volume
-// 			VS1063_SetVol(0);
-// 		}
-// 		//set right channel
-// 		uint16_t tmp = VS1063_ReadReg(SPI_AICTRL3);
-// 		VS1063_WriteReg(SPI_AICTRL3, (tmp & AICTRL3_ADC_MASK) | AICTRL3_ADC_RIGHT);
-// 
-// 		state = 1;
-// 	}
-	else if(MIC_SIGNAL && !FM_SIGNAL && state != 0)
+	else if(bool_fm_en)
 	{
-		VS1063A_WriteRAM(PLAYMOD_ADDR, PLAYMOD_MP3);
-		VS1063_SetVol(mainVol);
+		if(state != 1) {
+			state = 1;
+			VS1063A_WriteRAM(PLAYMOD_ADDR, PLAYMOD_MIC_FM);
+			//turn off volume
+			VS1063_SetVol(0);
 
-		state = 0;
+			//set right channel
+			uint16_t tmp = VS1063_ReadReg(SPI_AICTRL3);
+			VS1063_WriteReg(SPI_AICTRL3, (tmp & AICTRL3_ADC_MASK) | AICTRL3_ADC_RIGHT);
+		}
+	}
+	else
+	{
+		if(state != 0 && bRunningVS1063) {
+			state = 0;
+			VS1063A_WriteRAM(PLAYMOD_ADDR, PLAYMOD_MP3);
+			VS1063_SetVol(mainVol);
+		} else if(state == 0 && !bRunningVS1063) {
+			state = -1;
+		}
 	}
 
 	//config vol
@@ -694,19 +745,13 @@ void VS1063_ConfigOutput()
 	}
 
 	//check state to enable amplifier
-	// if(!AMPLI_IS_ON && ((state == 0 && bRunningVS1063) || state != 0))
-	// {
-	// 	AMPLI_ON;
-	// }
-	// else if(AMPLI_IS_ON && state == 0 && !bRunningVS1063)
-	// {
-	// 	AMPLI_OFF;
-	// }
-	if(state > 0) {
+	if(state >= 0) {
 		AMPLI_ON;
+		// AMPLI_OFF;
 	} else {
 		AMPLI_OFF;
 	}
+	
 }
 /*
 #define FM_SIGNAL_Pin GPIO_PIN_12
@@ -751,7 +796,8 @@ void VS1063_GPIO_Init()
 void VS1063_PlayMP3_Task()
 {
 	//init gpio 
-	// VS1063_GPIO_Init();
+	 VS1063_GPIO_Init();
+//	 VS1063_SoftReset();
 	for (;;)
 	{
 // 		//init , reset if has error
@@ -762,9 +808,9 @@ void VS1063_PlayMP3_Task()
 // 
 // 		//play mp3
 		 VS1063_PlayMp3Frame();
-		// VS1063_PlayMP3(szBeepMP3, sizeof(szBeepMP3));
-		osDelay(VS1063_TASK_INTERVAL);
-		// osDelay(500);		
+//		VS1063_PlayMP3(szBeepMP3, sizeof(szBeepMP3));
+		 osDelay(VS1063_TASK_INTERVAL);
+//		osDelay(500);
 	}
 }
 

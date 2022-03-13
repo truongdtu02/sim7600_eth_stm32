@@ -211,8 +211,12 @@ const osMessageQueueAttr_t SendEthQueue_attributes = {
 //////////////////////////
 
 ///// mutex ///////////
-osMutexId_t buffTcpPacket_mtID;  
+osMutexId_t spiFlash_mtID;  
+const osMutexAttr_t spiFlash_mtAttr = {
+  .name="spiFlash"                          // human readable mutex name
+};
 
+osMutexId_t buffTcpPacket_mtID;  
 const osMutexAttr_t buffTcpPacket_mtAttr = {
   .name="buff_tcppacket"                          // human readable mutex name
 };
@@ -338,20 +342,20 @@ int main(void)
   MX_SPI2_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
-  W25qxx_Init();
-  W25qxx_EraseSector(0);
-  W25qxx_EraseSector(1);
-  W25qxx_EraseSector(2);
-  W25qxx_EraseSector(3);
-  log_init();
-   int jj;
-   for(jj = 0; jj < 1000; jj++) {
-     log_to_flash("hello everyone, my name is bom, how are you\n");
-     if(jj > 0 && jj % 10 == 0) {
-       log_do_erase();
-//       W25qxx_WaitBusy(0);
-     }
-   }
+//  W25qxx_Init();
+//  W25qxx_EraseSector(0);
+//  W25qxx_EraseSector(1);
+//  W25qxx_EraseSector(2);
+//  W25qxx_EraseSector(3);
+//  log_init();
+//   int jj;
+//   for(jj = 0; jj < 1000; jj++) {
+//     log_to_flash("hello everyone, my name is bom, how are you\n");
+//     if(jj > 0 && jj % 10 == 0) {
+//       log_do_erase();
+////       W25qxx_WaitBusy(0);
+//     }
+//   }
 //  log_to_flash("hello everyone, my name is bom, how are you\n");
 //  log_to_flash("hello everyone, my name is bom, how are you\n");
 //  log_to_flash("hello everyone, my name is bom, how are you\n");
@@ -391,6 +395,7 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
+  spiFlash_mtID = osMutexNew(&spiFlash_mtAttr);
   buffTcpPacket_mtID = osMutexNew(&buffTcpPacket_mtAttr);
   /* USER CODE END RTOS_MUTEX */
 
@@ -941,7 +946,8 @@ void StartDefaultTask(void *argument)
 //		VS1063_PlayBeep();
 //		osDelay(500);
 //	}
-  if (netif_is_link_up(&gnetif) == 0)
+//  if (netif_is_link_up(&gnetif) == 0)
+  if (1)
   {
     //start with sim7600
     LOG_WRITE("sim7600 mode\n");

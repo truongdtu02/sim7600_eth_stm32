@@ -242,7 +242,7 @@ void sim7600_init(bool isMini)
   USART_InitStruct.StopBits = LL_USART_STOPBITS_1;
   USART_InitStruct.Parity = LL_USART_PARITY_NONE;
   USART_InitStruct.TransferDirection = LL_USART_DIRECTION_TX_RX;
-  USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_RTS_CTS; //LL_USART_HWCONTROL_NONE;
+  USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE; //LL_USART_HWCONTROL_NONE; LL_USART_HWCONTROL_RTS_CTS
   USART_InitStruct.OverSampling = LL_USART_OVERSAMPLING_16;
   LL_USART_Init(USART1, &USART_InitStruct);
   LL_USART_ConfigAsyncMode(USART1);
@@ -264,7 +264,7 @@ void sim7600_init(bool isMini)
 
 void sim7600_update_response(const char *_res1, const char *_res2)
 {
-  LOG_WRITE("UpdateRes\n");
+  // LOG_WRITE("UpdateRes\n");
   if (_res1 != NULL && strlen(_res1) > 0)
     res1 = _res1;
   else
@@ -301,7 +301,7 @@ void sim7600_usart_send_string(const char *str)
 // }
 void sim7600_usart_send_byte(const void *data, int len)
 {
-  LOG_WRITE("sendBytes\n");
+  // LOG_WRITE("sendBytes\n");
   const uint8_t *d = (uint8_t*)data;
 
   for (; len > 0; --len, ++d)
@@ -317,7 +317,7 @@ void sim7600_usart_send_byte(const void *data, int len)
 //send direct AT cmd, return 0: fail, 1,2: response 1,2
 int sim7600_send_cmd(const char *cmd, const char *response1, const char *response2, int timeout)
 {
-  LOG_WRITE("sendCMD\n");
+  LOG_WRITE("seCMD\n");
   uint32_t sendSimFlag = 0;
   sim7600_update_response(response1, response2);
   sim7600_usart_send_string(cmd);
@@ -330,7 +330,7 @@ int sim7600_send_cmd(const char *cmd, const char *response1, const char *respons
   }
   else if(sendSimFlag != osFlagsErrorTimeout)
   {
-    LOG_WRITE("sim send cmd eror\n");
+    LOG_WRITE("eror\n");
     osEventFlagsSet(ConfigSimEventID, 1 << simErrorEnum); //restart + reset
   }
   return 0;
@@ -347,7 +347,7 @@ int sim7600_AT(const char *cmd, const char *response1, const char *response2, in
   osEventFlagsId_t SimATEventID = osEventFlagsNew(NULL);
   if (SimATEventID == NULL)
   {
-    LOG_WRITE("SimATEventID eror\n");
+    LOG_WRITE("err0\n");
     osEventFlagsSet(ConfigSimEventID, 1 << simErrorEnum); //restart + reset
     return 0;
   }
@@ -372,7 +372,7 @@ int sim7600_AT(const char *cmd, const char *response1, const char *response2, in
       }
       else if(sendMsgFlag != osFlagsErrorTimeout) //flag error
       {
-        LOG_WRITE("SendSimQueueID eror1\n");
+        LOG_WRITE("err1\n");
         osEventFlagsSet(ConfigSimEventID, 1 << simErrorEnum); //restart + reset
         break;
       }
@@ -384,7 +384,7 @@ int sim7600_AT(const char *cmd, const char *response1, const char *response2, in
     }
     else //msg queue error
     {
-      LOG_WRITE("SendSimQueueID error2\n");
+      LOG_WRITE("err2\n");
       osEventFlagsSet(ConfigSimEventID, 1 << simErrorEnum); //restart + reset
       break;
     }
@@ -396,12 +396,12 @@ int sim7600_AT(const char *cmd, const char *response1, const char *response2, in
 //send AT and set simError flag if error, return false if send error
 int sim7600_AT_notify_error(const char *cmd, const char *response1, const char *response2, int timeout, int try)
 {
-  LOG_WRITE("simATnotify\n");
+  LOG_WRITE("ATno\n");
   int tmpFlag = sim7600_AT(cmd, response1, response2, timeout, try);
   if (tmpFlag == 0) //error
   {
     //set bit simError in ConfigSimEventID to restart and re config
-    LOG_WRITE("sim7600_AT_notify error\n");
+    LOG_WRITE("err\n");
     osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum));
   }
   return tmpFlag;
@@ -413,7 +413,7 @@ uint32_t waitTimecmdSendStatus2;
 //send packet, type:1 - TCP , type:2 - UDP; return true: send successful, false: fail
 bool sim7600_send_packet_ip(int type, const uint8_t *data, int data_length)
 {
-  LOG_WRITE("sendIP %d\n", type);
+  LOG_WRITE("seIP %d\n", type);
   //can send udp when sim7600ConnectStatus  == 2 and tcp when sim7600ConnectStatus >= 1;
   char *sim7600_cmd_buff; //default null
   if (type == 2 && sim7600ConnectStatus == 2)
@@ -444,7 +444,7 @@ bool sim7600_send_packet_ip(int type, const uint8_t *data, int data_length)
 
   if (sim7600_cmd_buff == NULL) //can't allocate memory
   {
-    LOG_WRITE("sim7600_send_packet_ip allocate error\n");
+    LOG_WRITE("err\n");
     osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum));
     return false;
   }
@@ -486,7 +486,7 @@ bool sim7600_send_packet_ip(int type, const uint8_t *data, int data_length)
   }
   else //don't recv response -> something wrong
   {
-    LOG_WRITE("sendSimFlag error\n");
+    LOG_WRITE("err2\n");
     osEventFlagsSet(ConfigSimEventID, 1 << simErrorEnum); //restart, reset
   }
   return false;
@@ -535,7 +535,7 @@ bool sim7600_fullConfig()
   restartSimstatus = 0; //reset
 
   //flow control AT+IFC=2,2 (sim_RTS, sim_CTS respectively)
-  if (!sim7600_AT("AT+IFC=2,2\r\n", "OK", NULL, 500, 2))
+  if (!sim7600_AT("AT+IFC=0,0\r\n", "OK", NULL, 500, 2))
     return false;
 
   //check sim
@@ -608,12 +608,12 @@ void sim7600_fullConfigTask()
   // }
 
 
-  LOG_WRITE("fullConfigTask\n");
+  LOG_WRITE("simflConTa\n");
   //first config
   sim7600_init(false);
   if(sim_buff == NULL || sim_dma_buff == NULL) //can't allocate memory
   {
-    LOG_WRITE("sim7600_fullConfigTask error0\n");
+    LOG_WRITE("err0\n");
     osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum)); //restart sim7600 and reset stm32
   }
   else
@@ -627,7 +627,7 @@ void sim7600_fullConfigTask()
     }
     else
     { //error
-      LOG_WRITE("sim7600_fullConfigTask error1\n");
+      LOG_WRITE("err1\n");
       //set bit simError in ConfigSimEventID to restart and re-config
       osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum));
     }
@@ -637,17 +637,16 @@ void sim7600_fullConfigTask()
   for (;;)
   {
     configSimFlag = osEventFlagsWait(ConfigSimEventID, 0xFF, osFlagsNoClear | osFlagsWaitAny, osWaitForever);
-    LOG_WRITE("configSimFlag %d\n", configSimFlag);
+    LOG_WRITE("conFSiFl%d\n", configSimFlag);
     if(configSimFlag < 0) //error 0xFFFFFFF...U
     {
-      LOG_WRITE("configSimFlag errorFlag\n");
-      LOG_WRITE("sim7600_fullConfigTask error2\n");
+      LOG_WRITE("err2\n");
       osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum)); //restart + reset
     }
     //analyze follow priority
     else if (configSimFlag & (1 << simErrorEnum))
     {
-      LOG_WRITE("configSimFlag simError\n");
+      LOG_WRITE("err3\n");
       osEventFlagsClear(ConfigSimEventID, 1 << simErrorEnum);
       //restart then clear all flag, var
       sim7600_restart(); //restart + reset
@@ -660,14 +659,14 @@ void sim7600_fullConfigTask()
       }
       else
       { //error
-        LOG_WRITE("sim7600_fullConfigTask error3\n");
+        LOG_WRITE("err4\n");
         //set bit simError in ConfigSimEventID to restart and re config
         osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum));
       }
     }
     else if(configSimFlag & (1 << rebootEnum))
     {
-      LOG_WRITE("configSimFlag rebootEnum\n");
+      LOG_WRITE("rebE\n");
       osEventFlagsClear(ConfigSimEventID, 1 << rebootEnum);
       if (sim7600_fullConfig())
       {
@@ -678,14 +677,14 @@ void sim7600_fullConfigTask()
       }
       else
       { //error
-        LOG_WRITE("sim7600_fullConfigTask error4\n");
+        LOG_WRITE("err5\n");
         //set bit simError in ConfigSimEventID to restart and re config
         osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum));
       }
     }
     else if (configSimFlag & (1 << callingEnum))
     {
-      LOG_WRITE("configSimFlag calling\n");
+      LOG_WRITE("call\n");
       osEventFlagsClear(ConfigSimEventID, 1 << callingEnum);
       //send AT+CHUP to end call
       sim7600_AT_notify_error("AT+CHUP", "OK", NULL, 500, 2);
@@ -699,7 +698,7 @@ void sim7600_fullConfigTask()
     // }
     else if (configSimFlag & (1 << smsEnum))
     {
-      LOG_WRITE("configSimFlag sms\n");
+      LOG_WRITE("sms\n");
       osEventFlagsClear(ConfigSimEventID, 1 << smsEnum);
       //delete all msg
       // if(sim7600_delete_all_msg()) {
@@ -709,8 +708,7 @@ void sim7600_fullConfigTask()
     }
     else
     { //something wrong
-      LOG_WRITE("configSimFlag sthElse\n");
-      LOG_WRITE("sim7600_fullConfigTask error5\n");
+      LOG_WRITE("err6\n");
       //set bit simError in ConfigSimEventID to restart and re config
       osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum));
     }
@@ -725,16 +723,15 @@ void sim7600_connectTask()
   {
     // connectSimFlag = osThreadFlagsWait(0xFF, osFlagsWaitAny | osFlagsNoClear, osWaitForever);
     connectSimFlag = osEventFlagsWait(ConnectSimEventID, 0xFF, osFlagsNoClear | osFlagsWaitAny, osWaitForever);
-    LOG_WRITE("connectSimFlag %d\n", connectSimFlag);
+    LOG_WRITE("connSimFl %d\n", connectSimFlag);
     if (connectSimFlag < 0) //error 0xFFFFFFF...U
     {
-      LOG_WRITE("connectSimFlag errorFlag\n");
-      LOG_WRITE("sim7600_connectTask error0\n");
+      LOG_WRITE("err0\n");
       osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum)); //restart + reset
     }
     else if (connectSimFlag & (1 << netErrorEnum))
     {
-      LOG_WRITE("connectSimFlag netError\n");
+      LOG_WRITE("netErr\n");
       osEventFlagsClear(ConnectSimEventID, 1 << netErrorEnum);
 
       //release tcp/udp stack
@@ -753,7 +750,7 @@ void sim7600_connectTask()
     }
     else if (connectSimFlag & (1 << openNetEnum))
     {
-      LOG_WRITE("connectSimFlag openNet\n");
+      LOG_WRITE("opNet\n");
       osEventFlagsClear(ConnectSimEventID, 1 << openNetEnum);
 
       //open network
@@ -761,7 +758,7 @@ void sim7600_connectTask()
     }
     else if (connectSimFlag & (1 << ipCloseEnum))
     {
-      LOG_WRITE("connectSimFlag ipClose\n");
+      LOG_WRITE("ipCl\n");
       sim7600DisconnectTime++;
 
       osEventFlagsClear(ConnectSimEventID, 1 << ipCloseEnum);
@@ -780,7 +777,7 @@ void sim7600_connectTask()
     }
     else if ((connectSimFlag & (1 << openConEnum)) && sim7600ConnectStatus == 0)
     {
-      LOG_WRITE("connectSimFlag openCon\n");
+      LOG_WRITE("opCon\n");
       sim7600ConnectTime++;
 
       osEventFlagsClear(ConnectSimEventID, 1 << openConEnum);
@@ -796,7 +793,7 @@ void sim7600_connectTask()
       }
       if(sim7600_cmd_buff == NULL) //can't allocate mem in heap
       {
-        LOG_WRITE("sim7600_connectTask error1\n");
+        LOG_WRITE("err1\n");
         osEventFlagsSet(ConfigSimEventID, 1 << simErrorEnum); //restart
         continue;
       }
@@ -819,7 +816,7 @@ void sim7600_connectTask()
     }
     else if ((connectSimFlag & (1 << doneTLSEnum)) && sim7600ConnectStatus == 1)
     {
-      LOG_WRITE("connectSimFlag doneTLS\n");
+      LOG_WRITE("doTLS\n");
       osEventFlagsClear(ConnectSimEventID, 1 << doneTLSEnum);
 
       //open UDP connect
@@ -847,8 +844,7 @@ void sim7600_connectTask()
     // }
     else
     { //something wrong
-      LOG_WRITE("connectSimFlag sthElse\n");
-      LOG_WRITE("sim7600_connectTask error2\n");
+      LOG_WRITE("err2\n");
       osEventFlagsSet(ConfigSimEventID, 1 << simErrorEnum); //restart
     }
   }
@@ -868,10 +864,10 @@ void sim7600_sendTask()
   for (;;)
   {
     sendMsgStt = osMessageQueueGet(SendSimQueueID, &sendMsgObj, NULL, osWaitForever); //wait until has msg
-    LOG_WRITE("sendMsgStt %d\n", sendMsgStt);
+    LOG_WRITE("seMSt%d\n", sendMsgStt);
     if (sendMsgStt == osOK && bSim7600IsRunning)
     {
-      LOG_WRITE("sendMsgType %d\n", sendMsgObj.type);
+      LOG_WRITE("ty%d\n", sendMsgObj.type);
       //check send msg type
       if (sendMsgObj.type == 0)
       { //normal cmd
@@ -915,10 +911,11 @@ void sim7600_usart_rx_check()
   new_pos_dma = sim_dma_buff_size - (int)(LL_DMA_GetDataLength(DMA2, LL_DMA_STREAM_2) & 0xFFFF);
   ndtrDMA2 = DMA2_Stream2->NDTR;
   
-  //printf("usart_rx_start %ld %d\n", curTime, (int)ndtrDMA2);  
+//  LOG_WRITE("usart_rx_start %ld %d\n", curTime, (int)ndtrDMA2);
+  LOG_WRITE("rx_ck");
   if(new_pos_dma < 0)
   {
-    LOG_WRITE("new_pos_dma < 0\n");
+    LOG_WRITE("n<0\n");
     //something wrong
     SIM7600_RESUME_RX();
     osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum)); //restart + reset
@@ -927,7 +924,7 @@ void sim7600_usart_rx_check()
   //0 1 2 3 4 5
   if (new_pos_dma != old_pos_dma)
   { /* Check change in received data */
-    LOG_WRITE("new_pos_dma %d, oldPos %d\n", new_pos_dma, old_pos_dma);
+    LOG_WRITE("n%d,o%d\n", new_pos_dma, old_pos_dma);
     if (new_pos_dma > old_pos_dma)
     { /* Current position is over previous one */
       /* We are in "linear" mode */
@@ -952,20 +949,20 @@ void sim7600_usart_rx_check()
     }
 
     //debug /////////////////////////////////////
-    uint8_t tmp = sim_buff[30]; sim_buff[30] = 0;
-    LOG_WRITE("simbuff %s\n", sim_buff);
-    if(strstr(sim_buff, "ECEIVE") == sim_buff) {
-      printf("sth wrong\n");
-    }
-    sim_buff[30] = tmp;
+    // uint8_t tmp = sim_buff[30]; sim_buff[30] = 0;
+    // LOG_WRITE("%s\n", sim_buff);
+    // if(strstr(sim_buff, "ECEIVE") == sim_buff) {
+    //   printf("sth wrong\n");
+    // }
+    // sim_buff[30] = tmp;
     //////////////////////////////////////////////
     SIM7600_RESUME_RX();
     int returnTmp = sim7600_handle_received_data();
     // SIM7600_RESUME_RX();
-    LOG_WRITE("returnTmp %d\n", returnTmp);
+    LOG_WRITE("re%d\n", returnTmp);
     if (returnTmp < 0) //something wrong
     {
-      LOG_WRITE("returnTmp < 0\n");
+      LOG_WRITE("re<0\n");
       //something wrong
       osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum)); //restart + reset
       return;
@@ -986,7 +983,7 @@ void sim7600_usart_rx_check()
 //__STATIC_INLINE  ~ macro
 int check_normal_response(uint8_t *posOfSubStr, const char *response, int *_sim_buff_index) //macro
 {
-  LOG_WRITE("chkRes\n");
+  LOG_WRITE("ckRe\n");
   //simple because all data received is string
   *_sim_buff_index = posOfSubStr + strlen(response) - sim_buff; // + 2 for "\r\n"
   return 0;
@@ -997,7 +994,7 @@ int check_normal_response(uint8_t *posOfSubStr, const char *response, int *_sim_
   // ->  posOfSubStr point to sim_buff[sim_buff_length] = '\0' (initialize above) -> pointerTo_r_n == NULL
   if(posOfSubStr >= (sim_buff + sim_buff_length)) 
   {
-    LOG_WRITE("chkRes pos >= (sim_+ sim_b)\n");
+    LOG_WRITE("err1\n");
     return 2;
   }
   uint8_t *pointerTo_r_n = strstr(posOfSubStr, "\r");
@@ -1011,13 +1008,13 @@ int check_normal_response(uint8_t *posOfSubStr, const char *response, int *_sim_
   else if (posOfSubStr + MAX_DATA_LENGTH_OF_RESPONSE_R_N < sim_buff + sim_buff_length) //the worst case, have enough bytes but can't sastified
   {                                                                                    \
     //data may be error-bit
-    LOG_WRITE("chkIp err\n");
+    LOG_WRITE("err2\n");
     return 1;
   }
   else
     //return _sim_buff_index; don't have enough data
   {
-    LOG_WRITE("chkIp 2\n");
+    LOG_WRITE("ckIp2\n");
     return 2;
   }
 }
@@ -1025,12 +1022,13 @@ int check_normal_response(uint8_t *posOfSubStr, const char *response, int *_sim_
 //return 0 ~ success + continue, 1~ no success (error),2 ~ return sim_buff_index (don't have enough data)
 int check_normal_ip_packet(uint8_t *posOfSubStrSave, const char *response, int *_sim_buff_index, uint8_t **outputData, int *outputLen)
 {
-  LOG_WRITE("chkIpRes, %d, %x, resLen %d\n", *_sim_buff_index, posOfSubStrSave, strlen(response));
+  // LOG_WRITE("chkIpRes, %d, %x, resLen %d\n", *_sim_buff_index, posOfSubStrSave, strlen(response));
   //check whether have \r\n at buffer
+  LOG_WRITE("ckIpRes");
   posOfSubStrSave += strlen(response);                      //point to length of IP packet (right after ",1," or ",0,")
   if(posOfSubStrSave >= (sim_buff + sim_buff_length))
   {
-    LOG_WRITE("chkIpRes pos >= (sim_+ sim_b)\n");
+    LOG_WRITE("err1\n");
     return 2;
   }
   uint8_t *pointerTo_r_n = strstr(posOfSubStrSave, "\r"); //point to '\r'
@@ -1048,7 +1046,7 @@ int check_normal_ip_packet(uint8_t *posOfSubStrSave, const char *response, int *
       }
       else
       { //data maybe bit-error -> restart
-        LOG_WRITE("chkIpRes Err1\n");
+        LOG_WRITE("err2\n");
         return 1;
       }
       posOfSubStrSave++;
@@ -1062,13 +1060,13 @@ int check_normal_ip_packet(uint8_t *posOfSubStrSave, const char *response, int *
     *outputData = posOfSubStrSave;
     *outputLen = lengthOfIPPacket;
     *_sim_buff_index = posOfSubStrSave - sim_buff + lengthOfIPPacket;
-    LOG_WRITE("ipPacket len %d\n", lengthOfIPPacket);
+    LOG_WRITE("len%d\n", lengthOfIPPacket);
     return 0;
   }
   else if (posOfSubStrSave + 6 < sim_buff + sim_buff_length) //the worst case: +RECEIVE,1,1500\r\n
   {
     //data may be error-bit
-    LOG_WRITE("chkIpRes Err2\n");
+    LOG_WRITE("err3\n");
     return 1;
   }
   else
@@ -1094,13 +1092,13 @@ char listResponse[LIST_RESPONSE_SIZE][20] =
  //handle received data, return num of bytes handled
 int sim7600_handle_received_data()
 {
-  LOG_WRITE("simHdlRecv\n");
+  LOG_WRITE("simHdRe");
   //make sure sim_buff is string
   sim_buff[sim_buff_length] = '\0'; //can do this since real size of sim_buff = sim_buff_size + 1, so even sim_buff_length (max) = sim_buff_size, it is still oke
   uint8_t *posOfSubStr;
   uint8_t *posOfSubStrSave;
   int sim_buff_index = 0;
-  LOG_WRITE("sim_buff_length %d\n", sim_buff_length);
+  LOG_WRITE("%d\n", sim_buff_length);
 
   //check whether sim7600 is rebooted, this message can insert anytime, anywhere in simbuff
   //  so this case can have in sim_buff can have 0x00 before +CPIN: READY (this case happen when receive ip packet)
@@ -1131,14 +1129,14 @@ int sim7600_handle_received_data()
 
   while (true)
   {
-    LOG_WRITE("sim_buff_index %d\n", sim_buff_index);
+    LOG_WRITE("id%d\n", sim_buff_index);
     posOfSubStrSave = NULL;
     if (sim_buff_index == sim_buff_length)
       return sim_buff_length; //reach end of buff
     else if(sim_buff_index > sim_buff_length) //out of index
     {
       //something wrong
-      LOG_WRITE("return sim_buff_index error\n");
+      LOG_WRITE("err0\n");
       return sim_buff_length;
     }
 
@@ -1189,7 +1187,7 @@ int sim7600_handle_received_data()
       }
     }
 
-    LOG_WRITE("resCheck %d, cmdStt %d\n", resultCheck, cmdSendStatus);
+    LOG_WRITE("re%d,cmd%d\n", resultCheck, cmdSendStatus);
     int resultTmp = -1;
     if (resultCheck < 0) // nothing can find
     {
@@ -1238,7 +1236,7 @@ int sim7600_handle_received_data()
         //<--debug
         char tmpBuff[9];
         memcpy(tmpBuff, tcpData, 8); tmpBuff[8] = 0;
-        LOG_WRITE("tcp packet addr:0x%08x len:%d data:%s\n", tcpData, tcpDataLen, tmpBuff);
+        LOG_WRITE("tcp0:0x%08x %d %s\n", tcpData, tcpDataLen, tmpBuff);
         //-->debug
 
         TCP_Packet_Analyze(tcpData, tcpDataLen);
@@ -1265,7 +1263,7 @@ int sim7600_handle_received_data()
     }
     else //cmd check
     {
-      LOG_WRITE("cmdSendStt %d\n", cmdSendStatus);
+      LOG_WRITE("cmd%d\n", cmdSendStatus);
       if (cmdSendStatus == 2)
       {                                      //just need '>'
         osEventFlagsSet(SendSimEventID, 1U); //notify to send task
@@ -1294,7 +1292,7 @@ int sim7600_handle_received_data()
       }
     }
 
-    LOG_WRITE("resultTmp %d\n", resultTmp);
+    LOG_WRITE("re%d\n", resultTmp);
     //data or net error, need to start
     if (resultTmp == 1)
     {
@@ -1361,7 +1359,7 @@ int sim7600_handle_received_data()
 
 void sim7600_change_baud(uint32_t baudrate)
 {
-  LOG_WRITE("changeBaud %lu\n", baudrate);
+  LOG_WRITE("chaBau%lu\n", baudrate);
   LL_USART_Disable(USART1);
   sim7600SetBaudrate(baudrate);
   LL_USART_Enable(USART1);

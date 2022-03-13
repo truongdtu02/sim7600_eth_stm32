@@ -88,6 +88,7 @@ extern "C"
 	int W25qxx_Suspend();
 	void W25qxx_WriteEnable_QuickWait(void);
 	void W25qxx_EraseSector_NoWait(uint32_t SectorAddr);
+	void W25qxx_EraseBlock_NoWait(uint32_t SectorAddr);
 
 	void W25qxx_EraseChip(void);
 	void W25qxx_EraseSector(uint32_t SectorAddr);

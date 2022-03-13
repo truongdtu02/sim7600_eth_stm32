@@ -52,14 +52,14 @@ osEventFlagsId_t TCP_UDP_StackEventID;
 //notify to ethernet or sim7600 stack
 void TCP_UDP_Notify(int flagsEnum)
 {
-  LOG_WRITE("tcpUdpNotify %d\n", flagsEnum);
+  LOG_WRITE("TUNot%d\n", flagsEnum);
   osEventFlagsSet(TCP_UDP_StackEventID, 1 << flagsEnum);
 }
 
 //payload : 1-tcp, 2-udp
 bool TCP_UDP_Send(int type, uint8_t *data, int len)
 {
-  LOG_WRITE("tcpUdpSend %d\n", type);
+  LOG_WRITE("TUSe%d\n", type);
   if (connectType == connectTypeSim7600)
   {
     return sim7600_IP(type, data, len);
@@ -93,7 +93,7 @@ bool AudioPacketHandle(uint8_t *data, int len)
   } else
     packet_decrypt_error1++;
   //wrong mp3 packet
-  LOG_WRITE("mp3 packet error\n");
+  LOG_WRITE("mp3paerr\n");
   return false;
 }
 
@@ -103,7 +103,7 @@ int packet_md5_error1 = 0, packet_md5_error2 = 0, packet_md5_error3 = 0, packet_
 int idPackOld = -1, idPackMiss = 0;
 void TCP_Packet_Handle(uint8_t *data, int data_len)
 {
-  LOG_WRITE("tcpPacketHdl\n");
+  LOG_WRITE("tcpPaHd\n");
   ISError = true;
   PacketTCPStruct *packetTcpHeader = (PacketTCPStruct *)(data + 4);
   // totalTCPBytes += packetTcpHeader->len;
@@ -147,7 +147,7 @@ void TCP_Packet_Handle(uint8_t *data, int data_len)
           ISError = false;
         }
       } else {
-    	  printf("md5sum mark error\n");
+    	  LOG_WRITE("err0\n");
       }
     }
     else if (TCPConnectStatus == 1 && realPacketLen >= AES128_BLOCK_LEN && (realPacketLen % AES128_BLOCK_LEN) == 0)
@@ -181,16 +181,15 @@ void TCP_Packet_Handle(uint8_t *data, int data_len)
     int *idPack = (int*)data;
     if(bool_first_print_len) {
       bool_first_print_len = 0;
-      printf("packet len (1st) %d\n", data_len);
+      LOG_WRITE("(1st)%d\n", data_len);
     }
     
     if(*idPack != idPackOld + 1) {
       idPackMiss += *idPack - idPackOld - 1;
-      printf("packet len (err) %d\n", data_len);
+      LOG_WRITE("err1%d\n", data_len);
     }
     idPackOld = *idPack;
     // return;
-
     
     if(packetTcpHeader->len + 2 != data_len) {
       packet_len_error++;
@@ -239,7 +238,7 @@ void TCP_Packet_Handle(uint8_t *data, int data_len)
   
   if (ISError)
   {
-    LOG_WRITE("TCP_Packet_Handle recv error\n");
+    LOG_WRITE("err2\n");
     TCP_UDP_Notify(TCP_UDP_Flag.Error);
     ISError = false;
   }
@@ -389,7 +388,7 @@ void TCP_Packet_Analyze(uint8_t *recvData, int length)
 {
     int pos_start = 0, i, endOfPack, j;
     start_TcpBuffLen = TcpBuffLen;
-    printf("TCP_Packet_Analyze BuffLen:%d, dataLen:%d\n", TcpBuffLen, length);
+    LOG_WRITE("TCPPaAn BL%d,dL%d\n", TcpBuffLen, length);
     //step 1
     memcpy(TcpBuff + TcpBuffLen, recvData, length);
     TcpBuffLen += length;
@@ -417,15 +416,16 @@ step_2:
 step_3_4:
     if(TcpBuff[pos_start] != '*') {
       tcpPacketErrorHead++;
+      LOG_WRITE("PackNo*\n");
     }
     HexStringToByteArray(pos_start + 1, endOfPack);
-    printf("endOfPack:%d pos_start:%d\n", endOfPack, pos_start);
+    LOG_WRITE("e%dps%d\n", endOfPack, pos_start);
 step_5:
     TCP_Packet_Handle(HexBuff, (endOfPack - pos_start - 1) / 2);
 
 step_6:
     pos_start = endOfPack + 1;
-    printf("pos_start %d, TcpBuffLen:%d\n", pos_start, TcpBuffLen);
+    LOG_WRITE("ps%d,BL%d\n", pos_start, TcpBuffLen);
     if(pos_start >= TcpBuffLen) { //reach the end of TcpBuff
       TcpBuffLen = 0;
       return;
@@ -460,7 +460,7 @@ uint32_t rtt;
 int64_t ntpTime = 0, ntpStart; //ntpstart = timer of stm32 when receive ntpTime
 void UDP_Packet_Analyze(uint8_t *data, int len)
 {
-  LOG_WRITE("udpPacketAnalyze\n");
+  LOG_WRITE("udpPaAn\n");
   //ntp packet
   if (len == UDP_PACKET_LEN)
   {
@@ -565,7 +565,7 @@ int64_t TCP_UDP_GetNtpTime()
 //init after TCP three-way handshake, but before RSA-AES handshake
 void TCP_UDP_Stack_Init(osEventFlagsId_t eventID, int successFlag, int errorFlag, bool IsETH)
 {
-  LOG_WRITE("tcpUdpInit\n");
+  LOG_WRITE("TUInit\n");
   //only one time after reboot
   if (salt == NULL)
   {
@@ -611,7 +611,7 @@ void TCP_UDP_Stack_Init(osEventFlagsId_t eventID, int successFlag, int errorFlag
 //stop timer before re-connect
 void TCP_UDP_Stack_Release()
 {
-  LOG_WRITE("tcpUdpRelease\n");
+  LOG_WRITE("TURel\n");
   osTimerStop(TCPTimerOnceID);
   IsTLSHanshaked = false;
 }
@@ -620,7 +620,7 @@ void TCP_UDP_Stack_Release()
 //time-out -> recconnect TCP/UDP
 void TCP_Timer_Callback(void *argument)
 {
-  LOG_WRITE("tcpTimerCallb\n");
+  LOG_WRITE("timCb\n");
   (void)argument;
   if (!IsTLSHanshaked)
   {
@@ -711,7 +711,7 @@ bool CheckMD5(PacketTCPStruct *packet)
 
 void ConvertTextWithSalt(uint8_t *data, int offset, int len, enum SaltEnum saltType)
 {
-  LOG_WRITE("convertTextSalt\n");
+  LOG_WRITE("cvTeSa\n");
   if (salt == NULL)
     return; //something wrong ???
 
@@ -743,7 +743,7 @@ void ConvertTextWithSalt(uint8_t *data, int offset, int len, enum SaltEnum saltT
 //check data is the same with salt
 bool CheckSaltACK(uint8_t *data, int len)
 {
-  LOG_WRITE("chkSaltACK\n");
+  LOG_WRITE("ckSa\n");
   if (len >= saltLen)
   {
     int i;

@@ -257,7 +257,10 @@ void W25qxx_EraseChip(void)
 	uint32_t StartTime = HAL_GetTick();
 	printf("w25qxx EraseChip Begin...\r\n");
 #endif
+	// W25qxx_WaitBusy(0);
+	W25qxx_WaitForWriteEnd();
 	W25qxx_WriteEnable();
+	W25qxx_WaitForWriteEnd();
 	HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_RESET);
 	W25qxx_Spi(0xC7);
 	HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
@@ -1121,3 +1124,25 @@ void W25qxx_EraseSector_NoWait(uint32_t SectorAddr)
 	HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
 }
 
+//###################################################################################################################
+/*No wait after send erase command*/
+void W25qxx_EraseBlock_NoWait(uint32_t BlockAddr)
+{
+	BlockAddr = BlockAddr * w25qxx.BlockSize;
+	W25qxx_WriteEnable_QuickWait();
+
+	HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_RESET);
+	if (w25qxx.ID >= W25Q256)
+	{
+		W25qxx_Spi(0xDC);
+		W25qxx_Spi((BlockAddr & 0xFF000000) >> 24);
+	}
+	else
+	{
+		W25qxx_Spi(0xD8);
+	}
+	W25qxx_Spi((BlockAddr & 0xFF0000) >> 16);
+	W25qxx_Spi((BlockAddr & 0xFF00) >> 8);
+	W25qxx_Spi(BlockAddr & 0xFF);
+	HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
+}

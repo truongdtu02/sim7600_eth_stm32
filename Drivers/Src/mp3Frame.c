@@ -25,7 +25,7 @@ PacketStruct buffTcpPacket[TCP_PACKET_BUFF_SIZE_MAX] = {
     {.bool_isempty = 1, .timestamp = 0}
 };
 
-#define MP3LOG //printf
+#define MP3LOG LOG_WRITE
 
 // int64_t curTimeDebug, offsetTimeDebug, curTimeDebugFirst = 0, curTimeDebugSecond = 0;
 
@@ -222,13 +222,13 @@ void mp3SaveFrame(MP3Struct *mp3Packet, int len)
 {
     static int oldSession = -1, oldID = -1;
 
-    MP3LOG("mp3SaveFrame\n");
+    MP3LOG("mp3SaFr\n");
 
     //check property packet, len of adu and mp3 frame
     uint8_t *tmpPtr = mp3Packet->data + mp3Packet->sizeOfFirstFrame + (mp3Packet->numOfFrame - 1) * mp3Packet->frameSize;
     if (tmpPtr != (uint8_t *)mp3Packet + len || mp3Packet->sizeOfFirstFrame > ADU_FRAME_SIZE \
         || mp3Packet->frameSize + 4 != MP3_FRAME_SIZE || mp3Packet->numOfFrame != NUM_OF_FRAME_IN_TCP_PACKET) {
-        MP3LOG("invalid tcp_mp3 packet\n");
+        MP3LOG("err0\n");
         cant_save_frame1++;
         return;
     }
@@ -343,20 +343,23 @@ int mp3GetVol()
 int miss_get_frame = 0, offset_get_frame = 0, offset_get_frame_lowest = 1000;
 int mp3GetFrame(uint8_t *buf, int buf_size) {
     static int oldSession = -1, oldID = -1;
-    
-    if(buf_size != (MP3_BLOCK_SIZE))
-        return -1;
-    
-    // uint8_t buf2[720];
 
+    MP3LOG("mp3SaFr\n");
+    if(buf_size != (MP3_BLOCK_SIZE)) {
+        MP3LOG("err0\n");
+        return -1;
+    }
+    
     int64_t curTime = 0, offset = 0;
     int error = 0;
     //check timestamp of current 
     //check time, before save
 
     osStatus_t status = osMutexAcquire(buffTcpPacket_mtID, WAIT_TCP_PACKET_BUFF_MUTEX);
-    if(status != osOK)
+    if(status != osOK) {
+        MP3LOG("err1\n");
         return -1;
+    }
 
     for(;;) {
         curTime = TCP_UDP_GetNtpTime();
@@ -414,6 +417,7 @@ int mp3GetFrame(uint8_t *buf, int buf_size) {
     }
 
     osMutexRelease(buffTcpPacket_mtID);
+    MP3LOG("reerr%d\n", -error);
     return (-error);
 }
 
