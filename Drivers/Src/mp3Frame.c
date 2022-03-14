@@ -344,7 +344,7 @@ int miss_get_frame = 0, offset_get_frame = 0, offset_get_frame_lowest = 1000;
 int mp3GetFrame(uint8_t *buf, int buf_size) {
     static int oldSession = -1, oldID = -1;
 
-    MP3LOG("mp3SaFr\n");
+    // MP3LOG("mp3SaFr\n");
     if(buf_size != (MP3_BLOCK_SIZE)) {
         MP3LOG("err0\n");
         return -1;
@@ -417,7 +417,7 @@ int mp3GetFrame(uint8_t *buf, int buf_size) {
     }
 
     osMutexRelease(buffTcpPacket_mtID);
-    MP3LOG("reerr%d\n", -error);
+    // MP3LOG("reerr%d\n", -error);
     return (-error);
 }
 
