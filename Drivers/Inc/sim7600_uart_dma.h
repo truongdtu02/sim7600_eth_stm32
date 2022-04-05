@@ -113,6 +113,7 @@ __STATIC_INLINE bool stringContain(const char* str, const char* substr)
  return false;
 }
 
+int get_sim7600ConnectTime();
 void sim7600_init(bool isMini);
 
 bool sim7600_fullConfig();

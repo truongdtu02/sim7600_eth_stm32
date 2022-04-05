@@ -498,6 +498,10 @@ int64_t startPlayTimeVS1063;
 uint32_t curFrameIdVs1063 = 0;
 int missFrame = 0;
 
+bool VS1063_IsRuning() {
+	return bRunningVS1063;
+}
+
 //get frame has property timestamp, check space remain in FIFO vs1063a
 int playTime = 0;
 int32_t sdiFree;

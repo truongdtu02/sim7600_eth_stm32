@@ -218,9 +218,13 @@ uint16_t caculateChecksum(uint8_t *data, int offset, int length)
 
 int miss_save_frame = 0, miss_time_frame = 0, cant_save_frame1 = 0, cant_save_frame2 = 0, cant_save_frame3 = 0;
 int64_t offsetPacket, offsetPacket_lowest = 1000, packet_timeout = 0;
+int get_miss_time_frame() {
+    return miss_time_frame;
+}
 void mp3SaveFrame(MP3Struct *mp3Packet, int len)
 {
     static int oldSession = -1, oldID = -1;
+    int bool_new_session = 0;
 
     MP3LOG("mp3SaFr\n");
 
@@ -236,6 +240,7 @@ void mp3SaveFrame(MP3Struct *mp3Packet, int len)
     if(oldSession == -1 || oldSession != mp3Packet->session) {
         oldSession = mp3Packet->session;
         oldID = mp3Packet->frameID;
+        bool_new_session = 1;
     } else {
         if(oldID + 5 < mp3Packet->frameID) {
             miss_save_frame += mp3Packet->frameID - oldID - 5;
@@ -280,6 +285,18 @@ void mp3SaveFrame(MP3Struct *mp3Packet, int len)
 
     osStatus_t status = osMutexAcquire(buffTcpPacket_mtID, WAIT_TCP_PACKET_BUFF_MUTEX);
     if(status == osOK) { //acquire success
+
+        if(bool_new_session) {
+                //remove all old frame when get new session
+            int j;
+            for(j = 0; j < TCP_PACKET_BUFF_SIZE_MAX; j++) {
+                buffTcpPacket[j].bool_isempty = 1;
+            }
+            buffTcpPacket_wrindex = 0;
+            buffTcpPacket_rdindex = 0;
+            bool_new_session = 0;
+        }
+
         if(buffTcpPacket[buffTcpPacket_wrindex].bool_isempty) {
             buffTcpPacket[buffTcpPacket_wrindex].frameID = mp3Packet->frameID;
             buffTcpPacket[buffTcpPacket_wrindex].session = mp3Packet->session;
@@ -344,6 +361,8 @@ int miss_get_frame = 0, offset_get_frame = 0, offset_get_frame_lowest = 1000;
 int mp3GetFrame(uint8_t *buf, int buf_size) {
     static int oldSession = -1, oldID = -1;
 
+    int bool_got_frame = 0;
+
     MP3LOG("mp3SaFr\n");
     if(buf_size != (MP3_BLOCK_SIZE)) {
         MP3LOG("err0\n");
@@ -390,6 +409,7 @@ int mp3GetFrame(uint8_t *buf, int buf_size) {
             continue;
         } else {
             //this frames is siutable
+            bool_got_frame = 1;
             memcpy(buf, buffTcpPacket[buffTcpPacket_rdindex].mp3Frame, buf_size);
             // memcpy(buf2, buffTcpPacket[buffTcpPacket_rdindex].mp3Frame, buf_size);
             //this frame is used need to remove

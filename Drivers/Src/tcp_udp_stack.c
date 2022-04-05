@@ -26,8 +26,8 @@ int saltLen;
 uint8_t RSA_Packet[RSA_PACKET_LEN];
 uint8_t Keepalive_Packet[] = {1, 0, 0};
 const int Keepalive_Packet_LEN = 3;
-uint8_t Status_Packet[] = {4, 0, 0, 0, 0, 0};
-const int Status_Packet_LEN = 6;
+uint8_t Status_Packet[] = {8, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+const int Status_Packet_LEN = 10;
 uint8_t NTP_Packet[32];
 const int NTP_PACKET_LEN = 32;
 
@@ -186,7 +186,7 @@ void TCP_Packet_Handle(uint8_t *data, int data_len)
     
     if(*idPack != idPackOld + 1) {
       idPackMiss += *idPack - idPackOld - 1;
-      LOG_WRITE("err1%d\n", data_len);
+      printf("err1%d\n", data_len);
     }
     idPackOld = *idPack;
     // return;
@@ -416,7 +416,7 @@ step_2:
 step_3_4:
     if(TcpBuff[pos_start] != '*') {
       tcpPacketErrorHead++;
-      LOG_WRITE("PackNo*\n");
+      printf("PackNo*\n");
     }
     HexStringToByteArray(pos_start + 1, endOfPack);
     LOG_WRITE("e%dps%d\n", endOfPack, pos_start);
@@ -628,10 +628,13 @@ void TCP_Timer_Callback(void *argument)
     return;
   }
 
-  if (tcpTimerCount % SEND_STAUS_INTERVAL == 0)
+  if (tcpTimerCount % SEND_STATUS_INTERVAL == 0)
   {
-    int diffStatus = 0;
-    memcpy(Status_Packet + 2, (uint8_t *)(&diffStatus), 4);
+    int diffStatus = 0, connectTime, missTimeFrame;
+    connectTime = get_sim7600ConnectTime();
+    missTimeFrame = get_miss_time_frame();
+    memcpy(Status_Packet + 2, (uint8_t *)(&connectTime), 4);
+    memcpy(Status_Packet + 6, (uint8_t *)(&missTimeFrame), 4);
     if (TCP_UDP_Send(1, Status_Packet, Status_Packet_LEN))
     {
       tcpTimerCount++;

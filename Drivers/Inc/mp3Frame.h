@@ -52,6 +52,7 @@ typedef struct PacketStruct
     uint32_t session;
 } PacketStruct;
 
+int get_miss_time_frame();
 void mp3SaveFrame(MP3Struct *mp3Packet, int len);
 int mp3GetVol();
 // FrameStruct *mp3GetNewFrame();

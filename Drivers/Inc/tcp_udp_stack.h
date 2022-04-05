@@ -2,7 +2,7 @@
 #ifndef TCP_UDP_STACK_H_
 #define TCP_UDP_STACK_H_
 
-#include <mp3Frame.h>
+#include "mp3Frame.h"
 #include "main.h"
 #include "stm32f407xx.h"
 #include <stdint.h>
@@ -47,7 +47,7 @@
 
 #define TLS_HANDSHAKE_TIMEOUT 20000 //20s
 #define TIMER_INTERVAL 2000 //10s
-#define SEND_STAUS_INTERVAL 300 // 60 * TIMER_INTERVAL 600s
+#define SEND_STATUS_INTERVAL 300 // 60 * TIMER_INTERVAL 600s
 #define KEEP_ALIVE_INTERVAL 20 // 6 * TIMER_INTERVAL 40s
 #define NTP_INTERVAL 300 // 390 * TIMER_INTERVAL 3900s
 #define RTT_NTP_MAX 100

@@ -24,8 +24,8 @@ const char* res2;
 //global var
 // char serverDomain[100] = "iothtnhust20201.xyz";
 char serverDomain[100] = "45.118.145.137";
-// char serverDomain[100] = "4.tcp.ngrok.io"; //"45.118.145.137";
-int serverPort = 5000; //1308;
+//char serverDomain[100] = "2.tcp.ngrok.io"; //"45.118.145.137";
+int serverPort = 5000;
 int connectToHostCount = 0;
 int restartSimstatus = 0;
 
@@ -42,6 +42,9 @@ int send_ip_error_count = 0;
 int sim7600ConnectStatus = 0; // 0:no-TCP-connect, 1: successful TCP handshake, 2: successful open TLS-TCP and UDP socket
 
 int sim7600ConnectTime = 0;
+int get_sim7600ConnectTime() {
+  return sim7600ConnectTime;
+}
 int sim7600DisconnectTime = 0;
 
 bool bSim7600IsRunning = false;
@@ -1391,7 +1394,7 @@ void sim7600_reset_all_state()
 
 void sim7600_restart()
 {
-  LOG_WRITE("restart\n");
+  printf("restart\n");
   //suspend all task ??? necessary
   // while (true) //debug
   // {
