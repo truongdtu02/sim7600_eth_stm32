@@ -350,7 +350,7 @@ int sim7600_AT(const char *cmd, const char *response1, const char *response2, in
   osEventFlagsId_t SimATEventID = osEventFlagsNew(NULL);
   if (SimATEventID == NULL)
   {
-    LOG_WRITE("err0\n");
+    LOG_WRITE("simATerr0\n");
     osEventFlagsSet(ConfigSimEventID, 1 << simErrorEnum); //restart + reset
     return 0;
   }
@@ -375,7 +375,7 @@ int sim7600_AT(const char *cmd, const char *response1, const char *response2, in
       }
       else if(sendMsgFlag != osFlagsErrorTimeout) //flag error
       {
-        LOG_WRITE("err1\n");
+        LOG_WRITE("simATerr1\n");
         osEventFlagsSet(ConfigSimEventID, 1 << simErrorEnum); //restart + reset
         break;
       }
@@ -387,7 +387,7 @@ int sim7600_AT(const char *cmd, const char *response1, const char *response2, in
     }
     else //msg queue error
     {
-      LOG_WRITE("err2\n");
+      LOG_WRITE("simATerr2\n");
       osEventFlagsSet(ConfigSimEventID, 1 << simErrorEnum); //restart + reset
       break;
     }
@@ -404,7 +404,7 @@ int sim7600_AT_notify_error(const char *cmd, const char *response1, const char *
   if (tmpFlag == 0) //error
   {
     //set bit simError in ConfigSimEventID to restart and re config
-    LOG_WRITE("err\n");
+    LOG_WRITE("ATnoerr\n");
     osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum));
   }
   return tmpFlag;
@@ -616,7 +616,7 @@ void sim7600_fullConfigTask()
   sim7600_init(false);
   if(sim_buff == NULL || sim_dma_buff == NULL) //can't allocate memory
   {
-    LOG_WRITE("err0\n");
+    LOG_WRITE("simflConerr0\n");
     osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum)); //restart sim7600 and reset stm32
   }
   else
@@ -630,7 +630,7 @@ void sim7600_fullConfigTask()
     }
     else
     { //error
-      LOG_WRITE("err1\n");
+      LOG_WRITE("simflConerr1\n");
       //set bit simError in ConfigSimEventID to restart and re-config
       osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum));
     }
@@ -643,13 +643,13 @@ void sim7600_fullConfigTask()
     LOG_WRITE("conFSiFl%d\n", configSimFlag);
     if(configSimFlag < 0) //error 0xFFFFFFF...U
     {
-      LOG_WRITE("err2\n");
+      LOG_WRITE("simflConerr2\n");
       osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum)); //restart + reset
     }
     //analyze follow priority
     else if (configSimFlag & (1 << simErrorEnum))
     {
-      LOG_WRITE("err3\n");
+      LOG_WRITE("simflConerr3\n");
       osEventFlagsClear(ConfigSimEventID, 1 << simErrorEnum);
       //restart then clear all flag, var
       sim7600_restart(); //restart + reset
@@ -662,14 +662,14 @@ void sim7600_fullConfigTask()
       }
       else
       { //error
-        LOG_WRITE("err4\n");
+        LOG_WRITE("simflConerr4\n");
         //set bit simError in ConfigSimEventID to restart and re config
         osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum));
       }
     }
     else if(configSimFlag & (1 << rebootEnum))
     {
-      LOG_WRITE("rebE\n");
+      LOG_WRITE("simflConrebE\n");
       osEventFlagsClear(ConfigSimEventID, 1 << rebootEnum);
       if (sim7600_fullConfig())
       {
@@ -680,7 +680,7 @@ void sim7600_fullConfigTask()
       }
       else
       { //error
-        LOG_WRITE("err5\n");
+        LOG_WRITE("simflConerr5\n");
         //set bit simError in ConfigSimEventID to restart and re config
         osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum));
       }
@@ -711,7 +711,7 @@ void sim7600_fullConfigTask()
     }
     else
     { //something wrong
-      LOG_WRITE("err6\n");
+      LOG_WRITE("simflConerr6\n");
       //set bit simError in ConfigSimEventID to restart and re config
       osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum));
     }
@@ -729,12 +729,12 @@ void sim7600_connectTask()
     LOG_WRITE("connSimFl %d\n", connectSimFlag);
     if (connectSimFlag < 0) //error 0xFFFFFFF...U
     {
-      LOG_WRITE("err0\n");
+      LOG_WRITE("connSimerr0\n");
       osEventFlagsSet(ConfigSimEventID, (1 << simErrorEnum)); //restart + reset
     }
     else if (connectSimFlag & (1 << netErrorEnum))
     {
-      LOG_WRITE("netErr\n");
+      LOG_WRITE("connSimnetErr\n");
       osEventFlagsClear(ConnectSimEventID, 1 << netErrorEnum);
 
       //release tcp/udp stack
@@ -753,15 +753,17 @@ void sim7600_connectTask()
     }
     else if (connectSimFlag & (1 << openNetEnum))
     {
-      LOG_WRITE("opNet\n");
+      LOG_WRITE("connSimopNet\n");
       osEventFlagsClear(ConnectSimEventID, 1 << openNetEnum);
 
       //open network
       if (!sim7600_AT_notify_error("AT+NETOPEN\r\n", "OK", "Network is already opened", 10000, 2)) continue; //+NETOPEN: 0
+
+      osEventFlagsSet(ConnectSimEventID, 1 << openConEnum);
     }
     else if (connectSimFlag & (1 << ipCloseEnum))
     {
-      LOG_WRITE("ipCl\n");
+      LOG_WRITE("connSimipCl\n");
       sim7600DisconnectTime++;
 
       osEventFlagsClear(ConnectSimEventID, 1 << ipCloseEnum);
@@ -780,7 +782,7 @@ void sim7600_connectTask()
     }
     else if ((connectSimFlag & (1 << openConEnum)) && sim7600ConnectStatus == 0)
     {
-      LOG_WRITE("opCon\n");
+      LOG_WRITE("connSimopCon\n");
       sim7600ConnectTime++;
 
       osEventFlagsClear(ConnectSimEventID, 1 << openConEnum);
@@ -796,7 +798,7 @@ void sim7600_connectTask()
       }
       if(sim7600_cmd_buff == NULL) //can't allocate mem in heap
       {
-        LOG_WRITE("err1\n");
+        LOG_WRITE("connSimerr1\n");
         osEventFlagsSet(ConfigSimEventID, 1 << simErrorEnum); //restart
         continue;
       }
@@ -819,7 +821,7 @@ void sim7600_connectTask()
     }
     else if ((connectSimFlag & (1 << doneTLSEnum)) && sim7600ConnectStatus == 1)
     {
-      LOG_WRITE("doTLS\n");
+      LOG_WRITE("connSimdoTLS\n");
       osEventFlagsClear(ConnectSimEventID, 1 << doneTLSEnum);
 
       //open UDP connect
@@ -847,7 +849,7 @@ void sim7600_connectTask()
     // }
     else
     { //something wrong
-      LOG_WRITE("err2\n");
+      LOG_WRITE("connSimerr2\n");
       osEventFlagsSet(ConfigSimEventID, 1 << simErrorEnum); //restart
     }
   }
@@ -952,12 +954,12 @@ void sim7600_usart_rx_check()
     }
 
     //debug /////////////////////////////////////
-    // uint8_t tmp = sim_buff[30]; sim_buff[30] = 0;
-    // LOG_WRITE("%s\n", sim_buff);
-    // if(strstr(sim_buff, "ECEIVE") == sim_buff) {
-    //   printf("sth wrong\n");
-    // }
-    // sim_buff[30] = tmp;
+    uint8_t tmp = sim_buff[30]; sim_buff[30] = 0;
+    LOG_WRITE("data_receive: %s\n", sim_buff);
+    if(strstr(sim_buff, "ECEIVE") == sim_buff) {
+      printf("sth wrong\n");
+    }
+    sim_buff[30] = tmp;
     //////////////////////////////////////////////
     SIM7600_RESUME_RX();
     int returnTmp = sim7600_handle_received_data();

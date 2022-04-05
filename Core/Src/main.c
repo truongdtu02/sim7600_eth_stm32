@@ -946,8 +946,8 @@ void StartDefaultTask(void *argument)
 //		VS1063_PlayBeep();
 //		osDelay(500);
 //	}
-//  if (netif_is_link_up(&gnetif) == 0)
-  if (1)
+  if (netif_is_link_up(&gnetif) == 0)
+  // if (1)
   {
     //start with sim7600
     LOG_WRITE("sim7600 mode\n");
