@@ -97,6 +97,9 @@ bool AudioPacketHandle(uint8_t *data, int len)
   return false;
 }
 
+uint32_t rtt;
+int64_t ntpTime = 0, ntpStart = 0; //ntpstart = timer of stm32 when receive ntpTime
+
 int realPacketLen; //len payload , not including md5
 int totalTCPBytes = 0;
 int packet_md5_error1 = 0, packet_md5_error2 = 0, packet_md5_error3 = 0, packet_len_error = 0;
@@ -176,6 +179,10 @@ void TCP_Packet_Handle(uint8_t *data, int data_len)
     // packetTcpHeader = (PacketTCPStruct *)(data + 4); 
     data_len -= 4;
 
+    
+
+    /////
+
     //check id
     static int bool_first_print_len = 1;
     int *idPack = (int*)data;
@@ -197,6 +204,34 @@ void TCP_Packet_Handle(uint8_t *data, int data_len)
     }
 
     totalTCPBytes += packetTcpHeader->len;
+
+    /////ntp tcp
+    if(packetTcpHeader->len == 14) {
+      NTPStruct2 *ntpPack = (NTPStruct2 *)(data + 4 + 2);
+
+      if(checkSum((uint8_t*)(data + 4 + 2), UDP_BUFF_LEN - 2) == ntpPack->checksum) {
+
+        uint32_t recvNTPTime = TIM_NTP->CNT;
+        rtt = (recvNTPTime - ntpPack->clientTime) >> 1; // >> 1 ~ / 2 (since TIM_NTP tick 0.5ms)
+
+        //the first time, get as soon as posible
+        if (ntpTime == 0)
+        {
+          ntpTime = ntpPack->serverTime + rtt / 2;
+          ntpStart = recvNTPTime >> 1; // /2 since TIMER tick 0.5ms
+        }
+
+        //get until enough percious
+        if (rtt < 600)
+        {
+          udpTimerCount++;
+          ntpTime = ntpPack->serverTime + rtt / 2;
+          ntpStart = recvNTPTime >> 1; // >> 1 ~ /2 since TIMER tick 0.5ms
+        }
+        return;
+      }
+    }
+
     //debug
     // int *order = (int*)(TcpBuff + 4);
     // int llen = packetTcpHeader->len + 4; // + 4B len
@@ -456,8 +491,6 @@ uint16_t checkSum(uint8_t *ptr, int length)
 	return (uint16_t)checksum;
 }
 
-uint32_t rtt;
-int64_t ntpTime = 0, ntpStart; //ntpstart = timer of stm32 when receive ntpTime
 void UDP_Packet_Analyze(uint8_t *data, int len)
 {
   LOG_WRITE("udpPaAn\n");
@@ -487,6 +520,15 @@ void UDP_Packet_Analyze(uint8_t *data, int len)
       ntpTime = ntpPack->serverTime + rtt / 2;
       ntpStart = recvNTPTime >> 1; // >> 1 ~ /2 since TIMER tick 0.5ms
     }
+  }
+}
+
+//force NTP time to test
+void TCP_UDP_SetNtpTime(int64_t _ntp)
+{
+  if(ntpTime == 0) {
+    ntpTime = _ntp;
+    ntpStart = TIM_NTP->CNT >> 1;
   }
 }
 
@@ -670,11 +712,20 @@ void TCP_Timer_Callback(void *argument)
     // AES_Encrypt_Packet_Key(NTP_Packet, 16, (uint8_t*)ntpAESkey);
 
     // TCP_UDP_Send(2, NTP_Packet, NTP_PACKET_LEN);
+    // uint32_t curT = TIM_NTP->CNT;
+    // memcpy(NTP_Packet, (uint8_t *)(&curT), 4);
+    // uint16_t _checksum = checkSum(NTP_Packet, 4);
+    // memcpy(NTP_Packet + 4, (uint8_t*)(&_checksum), 2);
+    // TCP_UDP_Send(2, NTP_Packet, 6);
+
+    //ntp base on TCP
     uint32_t curT = TIM_NTP->CNT;
-    memcpy(NTP_Packet, (uint8_t *)(&curT), 4);
-    uint16_t _checksum = checkSum(NTP_Packet, 4);
-    memcpy(NTP_Packet + 4, (uint8_t*)(&_checksum), 2);
-    TCP_UDP_Send(2, NTP_Packet, 6);
+    //2B first is len
+    NTP_Packet[0] = 6;
+    memcpy(NTP_Packet + 2, (uint8_t *)(&curT), 4);
+    uint16_t _checksum = checkSum(NTP_Packet + 2, 4);
+    memcpy(NTP_Packet + 6, (uint8_t*)(&_checksum), 2);
+    TCP_UDP_Send(1, NTP_Packet, 8);
   }
   else
   {

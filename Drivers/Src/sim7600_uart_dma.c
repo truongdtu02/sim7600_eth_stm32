@@ -23,9 +23,9 @@ const char* res2;
 
 //global var
 // char serverDomain[100] = "iothtnhust20201.xyz";
-char serverDomain[100] = "45.118.145.137";
-//char serverDomain[100] = "2.tcp.ngrok.io"; //"45.118.145.137";
-int serverPort = 5000;
+// char serverDomain[100] = "45.118.145.137";
+char serverDomain[100] = "0.tcp.ngrok.io"; //"45.118.145.137";
+int serverPort = 17572;
 int connectToHostCount = 0;
 int restartSimstatus = 0;
 
@@ -1190,7 +1190,7 @@ int sim7600_handle_received_data()
       }
     }
 
-    LOG_WRITE("re%d,cmd%d\n", resultCheck, cmdSendStatus);
+    // LOG_WRITE("re%d,cmd%d\n", resultCheck, cmdSendStatus);
     int resultTmp = -1;
     if (resultCheck < 0) // nothing can find
     {

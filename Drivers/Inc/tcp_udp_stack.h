@@ -100,11 +100,16 @@ void TCP_Timer_Callback(void* argument);
 //get UTC NTP time
 int64_t TCP_UDP_GetNtpTime();
 
+//force NTP time to test
+void TCP_UDP_SetNtpTime(int64_t _ntp);
+
 bool CheckMD5(PacketTCPStruct *packet);
 bool CheckSaltACK(uint8_t *data, int len);
 
 enum SaltEnum { Add, Sub};
 void ConvertTextWithSalt(uint8_t *data, int offset, int len, enum SaltEnum saltType);
+
+uint16_t checkSum(uint8_t *ptr, int length);
 
 //static byte type
 
